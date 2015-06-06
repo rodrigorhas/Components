@@ -1,5 +1,10 @@
 X.init({
-	requires: ['Viewport', 'Toolbar','Button', 'Card', 'Container','Label', 'PageDivider', 'TableGrid', 'Checkbox', 'Input', 'Window']
+	requires: [
+	'Viewport', 'Toolbar','Button', 'Card',
+	'Container','Label', 'PageDivider',
+	'TableGrid', 'Checkbox', 'Input', 'Window',
+	'Grid', 'ShortcutToolbar'
+	]
 });
 
 $(document).on('x-ready', function () {
@@ -60,6 +65,29 @@ $(document).on('x-ready', function () {
 									],
 									
 									title: 'Cadastro de Alunos'
+								})
+								X.effects.loadRipple();
+							}
+						}
+					}),
+
+					new Button({
+						label: 'Test',
+						listen: {
+							click: function (e) {
+								new Window({
+									toolbarButtons: {
+										close: true,
+										minimize: true,
+										fullscreen: true
+									},
+									items: [
+										new Grid({
+											layout: '2:8:2'
+										})
+									],
+									
+									title: 'Test'
 								})
 								X.effects.loadRipple();
 							}

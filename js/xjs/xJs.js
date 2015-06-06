@@ -199,6 +199,47 @@ x.prototype = {
 		}
 
 		return (isset(res)) ? res : false;
+	},
+
+	shortTb: {
+		return: function (item) {
+			for (var i = 0; i < $components.length; i++) {
+				if($components[i].constructor.name == 'ShortcutToolbar'){
+					return $components[i];
+				}
+			};
+		},
+
+		push: function (item) {
+			for (var i = 0; i < $components.length; i++) {
+				if($components[i].constructor.name == 'ShortcutToolbar'){
+					$components[i].items.push(item);
+				}
+			};
+		},
+
+		splice: function (id, index, length) {
+			for (var i = 0; i < $components.length; i++) {
+				if($components[i].constructor.name == 'ShortcutToolbar'){
+					var c = $components[i];
+					if(isset(id)){
+						for (var u = 0; u < c.items.length; u++) {
+							if(c.items[u].refId == id){
+								c.items.splice(u, 1);
+							}
+						};
+					} else {
+						c.items.splice(index, length);
+					}
+				}
+			};
+		},
+	},
+
+	ArrayObserve: function (arr, callback) {
+		Array.observe(arr, function (changes){
+			callback(changes)
+		});
 	}
 }
 

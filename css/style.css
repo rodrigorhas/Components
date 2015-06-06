@@ -114,10 +114,12 @@ body {
   100% {
     transform: scale(2.5);
     opacity: 0.05; } }
+
 @-webkit-keyframes ripple {
   100% {
     transform: scale(2.5);
     opacity: 0.05; } }
+
 .card {
   background-color: white;
   margin: 10px 8px;
@@ -225,36 +227,39 @@ ul.dropdown {
     width: 100%;
     display: block;
     box-shadow: 0 14px 12px 0 rgba(0, 0, 0, 0.17); }
-    .window .inside-shadow .content {
-      height: 100%;
+    .window .inside-shadow .handler {
       width: 100%;
-      display: block; }
+      height: 38px;
+      border-bottom: 1px solid #ededed;
+      background-color: #f7f7f7;
+      border-radius: 2px 2px 0 0;
+      cursor: move; }
+      .window .inside-shadow .handler .title {
+        position: relative;
+        top: 8px;
+        left: 16px;
+        color: #676767;
+        font-weight: 400; }
+      .window .inside-shadow .handler .btn-group {
+        padding: 12px;
+        float: right; }
+        .window .inside-shadow .handler .btn-group .icon {
+          padding: 4px;
+          cursor: pointer; }
+          .window .inside-shadow .handler .btn-group .icon svg {
+            width: 16px;
+            height: 16px; }
+            .window .inside-shadow .handler .btn-group .icon svg path {
+              fill: #7b7b7b; }
+    .window .inside-shadow .content {
+      height: calc(100% - 38px);
+      width: 100%;
+      display: block;
+      overflow: auto;
+      position: relative;
+      top: -8px; }
       .window .inside-shadow .content .table {
         width: 100%; }
-      .window .inside-shadow .content .handler {
-        width: 100%;
-        height: 38px;
-        border-bottom: 1px solid #ededed;
-        background-color: #f7f7f7;
-        border-radius: 2px 2px 0 0;
-        cursor: move; }
-        .window .inside-shadow .content .handler .title {
-          position: relative;
-          top: 8px;
-          left: 16px;
-          color: #676767;
-          font-weight: 400; }
-        .window .inside-shadow .content .handler .btn-group {
-          padding: 12px;
-          float: right; }
-          .window .inside-shadow .content .handler .btn-group .icon {
-            padding: 4px;
-            cursor: pointer; }
-            .window .inside-shadow .content .handler .btn-group .icon svg {
-              width: 16px;
-              height: 16px; }
-              .window .inside-shadow .content .handler .btn-group .icon svg path {
-                fill: #7b7b7b; }
 
 .input {
   padding: 8px 12px;
@@ -262,4 +267,15 @@ ul.dropdown {
   background-color: #f2f2f2;
   margin: 8px 0; }
 
-/*# sourceMappingURL=style.css.map */
+.ShortcutToolbar {
+  padding: 6px 4px;
+  box-shadow: 0 0px 2px rgba(0, 0, 0, 0.3);
+  background-color: white;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3; }
+  .ShortcutToolbar .btn {
+    padding: 6px 4px;
+    font-size: 0.85em; }

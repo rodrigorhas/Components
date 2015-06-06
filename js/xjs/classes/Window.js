@@ -10,16 +10,15 @@ function Window (options) {
 
 Window.extend(BaseComponent);
 
-Window.prototype.html = '<div class="window"><div class="inside-shadow"><div class="content"><div class="handler"></div></div></div></div>';
+Window.prototype.html = '<div class="window"><div class="inside-shadow"><div class="handler"></div><div class="content"></div></div></div>';
 
 Window.prototype.close = function () {
 	var dom = this.html;
 	
 	dom.remove();
 
-	console.debug('window closed and removed')
+	X.shortTb.splice(this.id);
 
-	delete this;
 }
 
 Window.prototype.before = function (dom){
@@ -64,6 +63,7 @@ Window.prototype.before = function (dom){
 	});
 
 	this.listen = {};
+	this.defaults = {};
 
 	this.listen.click = function (e, target) {
 	    var widget = dom.data('ui-draggable');
@@ -82,7 +82,7 @@ Window.prototype.before = function (dom){
 
 		if(this.toolbarButtons.fullscreen){
 			dom.find(bgs).append('<span class="icon icon-full"><svg viewBox="0 0 24 24"><path fill="#000000" d="M5,5H10V7H7V10H5V5M14,5H19V10H17V7H14V5M17,14H19V19H14V17H17V14M10,17V19H5V14H7V17H10Z" /></svg></span>');
-			dom.find(bgs + ' .icon-full').on('click', function (){
+			dom.find(bgs + ' .icon-full').on('click', function (e){
 				$this.toggleFs();
 			});
 		}
@@ -105,13 +105,26 @@ Window.prototype.before = function (dom){
 		dom.find('.handler').prepend('<span class="title">' + this.title +'</span>');
 	}
 
+	if($('.window').length + 1 > 1) {
+		X.shortTb.push(new Button({label: this.title, refId: this.id}))
+		console.log(2);
+	} else {
+		new ShortcutToolbar({
+			items: [
+				new Button({
+					label: this.title, refId: this.id
+				})
+			]
+		})
+	}
+
 }
 
 Window.prototype.after = function (dom) {
 	dom.appendTo('.view'); // js hack to make an static class Window
+}
 
-	this.defaults = {};
-
+Window.prototype.setDefaults = function (dom) {
 	this.defaults.top = dom.css('top');
 	this.defaults.left = dom.css('left');
 	this.defaults.width = dom.css('width');
@@ -123,13 +136,14 @@ Window.prototype.toggleFs = function () {
 
 	if(!dom.hasClass('fs')) {
 		dom.addClass('fs');
+
+		this.setDefaults(dom);
+
 		dom.animate({
 			width: '100%',
 			height: '100%',
 			top: 0,
-			left: 0,
-			right: 0,
-			bottom: 0
+			left: 0
 		}, 300);
 	} else {
 
@@ -145,10 +159,8 @@ Window.prototype.toggleFs = function () {
 		dom.animate({
 			width: this.defaults.width,
 			height: this.defaults.height,
-			top: parseInt(this.defaults.top, 10) / 2,
-			left: parseInt(this.defaults.left, 10) / 2,
-			right: 'auto',
-			bototm: 'auto'
+			top: this.defaults.top,
+			left: this.defaults.left
 		}, 300,	function () {
 				dom.removeClass('fs');
 			}
