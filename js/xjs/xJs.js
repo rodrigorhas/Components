@@ -112,7 +112,7 @@ x.prototype = {
 
 	init: function (options) {
 
-		window.X.bindings = [];
+		$scope = window.X.bindings = {};
 
 		for(var property in options){
 			this[property] = options[property];
@@ -146,34 +146,28 @@ x.prototype = {
 		}
 	},
 
-	bind: function (b) {
-		function bind(bindTo) {
-		    Object.defineProperty(this, 'value', {
-		        get : function ( ) {
-		            return bindTo.value;
-		        },
-		        set : function ( val ) {
-		            bindTo.value = val;
-		        }
-		    });
-		    console.log('done binding', bindTo)
-		}
-		var obj = new bind(document.getElementById(b));
-		window.X.bindings.push(obj);
-		return obj;
+	bind: function (domElement, obj) {
+		domElement = document.getElementById(domElement);
+
+	    var bind = domElement.getAttribute("bind").split(":");
+	    var domAttr = bind[0].trim();
+	    var itemAttr = bind[1].trim();
+
+	    Object.observe(obj, function (change) {
+	        domElement[domAttr] = obj[itemAttr];
+	    });
+	    new MutationObserver(updateObj).observe(domElement, {
+	        attributes: true,
+	        childList: true,
+	        characterData: true
+	    });
+	    domElement.addEventListener("keyup", updateObj);
+	    domElement.addEventListener("click",updateObj);
+	    function updateObj(){
+	        obj[itemAttr] = domElement[domAttr];   
+	    }
+	    domElement[domAttr] = obj[itemAttr];
 	}
-
-	/*create: function (newClass, arguments) {
-		var f = factory.new(newClass, arguments);
-		
-		if(!isset(arguments.items)) return console.log('nao tem mais children');
-
-		for (var i = 0; i < arguments.items.length; i++) {
-			var item = arguments.items[i];			
-			//factory.new(item.type, item);
-			this.create(item.type, item);		
-		};
-	}*/
 }
 
 var X = new x();

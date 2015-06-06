@@ -63,7 +63,18 @@ $(document).on('x-ready', function () {
 					}),
 
 					new Input({
-						bind: true
+						bind: {
+							name: 'name',
+							value: {
+								name: 'Rodrigo'
+							}
+						}
+					}),
+
+					new Label({
+						bind: {
+							to: 'name'
+						}
 					})
 				]
 			}),

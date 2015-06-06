@@ -1,7 +1,7 @@
 function Label (options) {
 	this.options = options;
 
-	this.init();
+	if(isset(this.init)) this.init();
 }
 
 Label.extend(BaseComponent);

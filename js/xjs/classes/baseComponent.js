@@ -2,7 +2,7 @@ BaseComponent.prototype.html = '<div></div>';
 
 BaseComponent.prototype.init = function (run) {
 
-	$this = this;
+	var __this = this;
 
 	for(var property in this.options){
 		this[property] = this.options[property];
@@ -35,12 +35,41 @@ BaseComponent.prototype.init = function (run) {
 	if(this.layout)
 		dom.addClass(this.layout);
 
-	if(this.bind)
-		setTimeout(function (){
-			X.bind($this.id);
-			console.log($this.id, $('input').attr('id'));
-		}, 1); // 1 ms for append fix
-	console.log(this.id);
+	if(this.bind && this.bind.name)
+		dom.attr('bind', 'value:' + this.bind.name);
+
+	if(this.bind && this.bind.to)
+		dom.attr('bind', 'textContent:' + this.bind.to);
+
+	$(document).on('x-render', function (){
+		var b = window.X.bindings;
+		var id = __this.id;
+		var bind = __this.bind;
+
+		var name = (isset(bind) && isset(bind.name)) ? bind.name : false;
+		var value = (isset(bind) && isset(bind.value)) ? bind.value : false;
+		var to = (isset(bind) && isset(bind.to)) ? bind.to : false;
+
+			if(name){
+
+				X.bind(id, value);
+				b[name] = bind;
+				console.log(b);
+
+			}else if (to){
+				
+				var res;
+				for (var prop in b) {
+					console.log('log');
+					if(b[prop].name == to){
+						res = b[prop].value;
+						break;
+					}
+				};
+
+				X.bind(id, res);
+			}
+	});
 
 	if(isset(run) && isset(run.during))
 		dom = (isset(this.during(dom))) ? this.during(dom) : dom;
