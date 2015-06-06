@@ -21,12 +21,24 @@ Window.prototype.close = function () {
 
 }
 
-Window.prototype.before = function (dom){
-	var $this = this;
-	this.renderTo = '.content'
-	var c = (this.containment) ? this.containment : 'body';
+Window.prototype.center = function (dom){
+	var th = parseInt(dom.css('height'), 10);
+	var tw = parseInt(dom.css('width'), 10);
 
-	max = 0;
+	var ww = $(window).width();
+	var wh = $(window).height();
+
+	var l = (ww/2) - (tw/2);
+	var t = (wh/2) - (th/2);
+
+	dom.css({
+		top: t,
+		left: l
+	})
+}
+
+Window.prototype.moveToFirst = function (dom){
+	var max = 0;
 
 	$('.window').each(function() {
 		var z = parseInt( $( this ).css( "z-index" ), 10 );
@@ -34,6 +46,14 @@ Window.prototype.before = function (dom){
 	});
 		
 	dom.css("z-index", max + 2 );
+}
+
+Window.prototype.before = function (dom){
+	var __this = this;
+	this.renderTo = '.content'
+	var c = (this.draggable && this.draggable.containment) ? this.draggable.containment : 'body';	
+
+	this.moveToFirst(dom);
 
 	var bgs = '.handler .btn-group',
 	bgo = dom.find(bgs);
@@ -46,7 +66,6 @@ Window.prototype.before = function (dom){
 		cancel: bgs,
 
 		start: function (e, ui) {
-			ui.helper.addClass('moved');
 			ui.helper.css('opacity', 0.75);
 		},
 
@@ -66,10 +85,7 @@ Window.prototype.before = function (dom){
 	this.defaults = {};
 
 	this.listen.click = function (e, target) {
-	    var widget = dom.data('ui-draggable');
-	    widget._mouseStart(event);
-	    widget._mouseDrag(event);
-	    widget._mouseStop(event);
+	    __this.moveToFirst(dom)
 	}
 
 	dom.find('.handler').append('<div class="btn-group"></div>');  // add the btn-group for else case
@@ -78,26 +94,29 @@ Window.prototype.before = function (dom){
 
 		if(this.toolbarButtons.minimize){
 			dom.find(bgs).append('<span class="icon icon-minus"><svg viewBox="0 0 24 24"><path fill="#000000" d="M19,13H5V11H19V13Z" /></svg></span>');
+			dom.find(bgs + ' .icon-minus').on('click', function (e){
+				__this.minimize();
+			});
 		}
 
 		if(this.toolbarButtons.fullscreen){
 			dom.find(bgs).append('<span class="icon icon-full"><svg viewBox="0 0 24 24"><path fill="#000000" d="M5,5H10V7H7V10H5V5M14,5H19V10H17V7H14V5M17,14H19V19H14V17H17V14M10,17V19H5V14H7V17H10Z" /></svg></span>');
 			dom.find(bgs + ' .icon-full').on('click', function (e){
-				$this.toggleFs();
+				__this.toggleFs();
 			});
 		}
 
 		if(this.toolbarButtons.close){
 			var close = dom.find(bgs).append('<span class="icon icon-close"><svg viewBox="0 0 24 24"><path fill="#000000" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg></span>');
 			dom.find(bgs + ' .icon-close').on('click', function (){
-				$this.close();
+				__this.close();
 			});
 		}
 
-	} else { // add only close button
+	} else { // only add close button
 		var close = dom.find(bgs).append('<span class="icon icon-close"><svg viewBox="0 0 24 24"><path fill="#000000" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg></span>');
 		close.on('click', function (){
-			$this.close();
+			__this.close();
 		});
 	}
 
@@ -105,14 +124,23 @@ Window.prototype.before = function (dom){
 		dom.find('.handler').prepend('<span class="title">' + this.title +'</span>');
 	}
 
+	// Create shorTb and add a button or just add a button if shortTb exists
 	if($('.window').length + 1 > 1) {
 		X.shortTb.push(new Button({label: this.title, refId: this.id}))
-		console.log(2);
 	} else {
 		new ShortcutToolbar({
 			items: [
 				new Button({
-					label: this.title, refId: this.id
+					label: this.title, refId: this.id,
+					listen: {
+						click: function (e) {
+							if(dom.hasClass('minimized')){
+								__this.restore();
+							} else {
+								__this.minimize();
+							}
+						}
+					}
 				})
 			]
 		})
@@ -122,6 +150,7 @@ Window.prototype.before = function (dom){
 
 Window.prototype.after = function (dom) {
 	dom.appendTo('.view'); // js hack to make an static class Window
+	this.center(dom);
 }
 
 Window.prototype.setDefaults = function (dom) {
@@ -133,6 +162,7 @@ Window.prototype.setDefaults = function (dom) {
 
 Window.prototype.toggleFs = function () {
 	var dom = $(this.html);
+
 
 	if(!dom.hasClass('fs')) {
 		dom.addClass('fs');
@@ -148,7 +178,6 @@ Window.prototype.toggleFs = function () {
 	} else {
 
 		dom.css({
-			translate: '',
 			left: 'auto',
 			top: 'auto',
 			position: 'absolute'
@@ -166,4 +195,43 @@ Window.prototype.toggleFs = function () {
 			}
 		);
 	}
+}
+
+Window.prototype.minimize = function () {
+	var dom = this.html;
+
+	this.setDefaults(dom);
+
+	var html = X.shortTb.return(this.id).html;
+	var off = html.offset();
+	var hh = html.height();
+	var hw = html.width;
+
+	dom.animate({
+		height: hh,
+		width: hw,
+		left: off.left,
+		top: off.top,
+		opacity: 0
+	}, 200, function () {
+		dom.addClass('minimized');
+	});
+
+}
+
+Window.prototype.restore = function () {
+	var dom = this.html;
+
+	var def = this.defaults;
+
+	dom.removeClass('minimized');
+
+	dom.animate({
+		height: def.height,
+		width: def.width,
+		left: def.left,
+		top: def.top,
+		opacity: 1
+	}, 250);
+
 }

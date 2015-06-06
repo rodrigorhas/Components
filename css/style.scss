@@ -303,15 +303,9 @@ ul.dropdown {
 	border-radius: 2px;
 	position: absolute;
 	z-index: 3;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%,-50%);
 
-	&.moved {
-		position: fixed;
-		top: auto;
-		left: auto;
-		transform: translate(0);
+	&.minimized {
+		display: none;
 	}
 
 	.inside-shadow {

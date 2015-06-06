@@ -13,17 +13,7 @@ ShortcutToolbar.prototype.html = '<div class="ShortcutToolbar"></div>';
 ShortcutToolbar.prototype.before = function (dom) {
 	var __this = this;
 	if(isset(this.items)) {
-		for (var i = 0; i < this.items.length; i++) {
-			var item = this.items[i];
-
-			var name = item.constructor.name;
-
-			if(name == 'Button') {
-				this.class = 'min'
-			}
-
-		};
-
+		
 		X.ArrayObserve(this.items, function (changes) {
 			var c = changes[0];
 			if(c.addedCount){
@@ -46,5 +36,5 @@ ShortcutToolbar.prototype.before = function (dom) {
 }
 
 ShortcutToolbar.prototype.after = function (dom) {
-	dom.appendTo('.view'); // js hack to make an static class Window
+	dom.appendTo('.view'); // js hack to make an static class ShortcutToolbar
 }

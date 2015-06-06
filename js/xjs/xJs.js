@@ -202,10 +202,19 @@ x.prototype = {
 	},
 
 	shortTb: {
-		return: function (item) {
+		return: function (id) {
 			for (var i = 0; i < $components.length; i++) {
 				if($components[i].constructor.name == 'ShortcutToolbar'){
-					return $components[i];
+					var c = $components[i];
+					if(isset(id)) {
+						for (var u = 0; u < c.items.length; u++) {
+							if(c.items[u].refId == id){
+								return c.items[u];
+							}
+						};
+					} else {
+						return $components[i];
+					}
 				}
 			};
 		},
