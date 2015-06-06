@@ -75,9 +75,16 @@ BaseComponent.prototype.init = function (run) {
 		dom = (isset(this.during(dom))) ? this.during(dom) : dom;
 
 	if(this.items) {
-		for (var i = 0; i < this.items.length; i++) {
-			dom.append(this.items[i].html);
+		if(this.renderTo){
+			for (var i = 0; i < this.items.length; i++) {
+				dom.find(this.renderTo).append(this.items[i].html);
+			}
+		}else{
+			for (var i = 0; i < this.items.length; i++) {
+				dom.append(this.items[i].html);
+			}
 		}
+
 	}
 
 	this.html = dom;
