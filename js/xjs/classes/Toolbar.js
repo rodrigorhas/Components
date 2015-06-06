@@ -1,7 +1,7 @@
 function Toolbar (options) {
 	this.options = options;
 
-	this.init({
+	if(isset(this.init)) this.init({
 		before: true
 	});
 }

@@ -13,7 +13,6 @@ $(document).on('x-ready', function () {
 						label: 'Cadastro',
 						listen: {
 							click: function (e) {
-								console.log(e);
 								new Window({
 									toolbarButtons: {
 										close: true,
@@ -29,7 +28,6 @@ $(document).on('x-ready', function () {
 						label: 'Movimentação',
 						listen: {
 							click: function (e) {
-								console.log(e);
 								new Window({
 									toolbarButtons: {
 										close: true,
@@ -45,7 +43,6 @@ $(document).on('x-ready', function () {
 						label: 'Lançamentos',
 						listen: {
 							click: function (e) {
-								console.log(e);
 								new Window({
 									toolbarButtons: {
 										close: true,
@@ -60,21 +57,6 @@ $(document).on('x-ready', function () {
 					new Button({
 						label: 'ferramentas',
 						state: 'disabled'
-					}),
-
-					new Input({
-						bind: {
-							name: 'name',
-							value: {
-								name: 'Rodrigo'
-							}
-						}
-					}),
-
-					new Label({
-						bind: {
-							to: 'name'
-						}
 					})
 				]
 			}),
@@ -95,7 +77,31 @@ $(document).on('x-ready', function () {
 								data: '{"fields":[{"name":"ID","type":"int"},{"name":"Nome","type":"string"},{"name":"Tipo","type":"string"}],"lines":[[1,"Vinicius Hacebe","Fornecedor"],[2,"Rodrigo","Cliente"],[3,"Alan","Fornecedor"],[4,"Brand\u00e3o","Cliente"]]}'
 							})
 						]
+					}),
+
+					new PageDivider({
+						label: '2WDB example'
+					}),
+
+					new Card({
+						items: [
+							new Input({
+								bind: {
+									name: 'name',
+									value: {
+										name: '2WDB Worth :D'
+									}
+								}
+							}),
+
+							new Label({
+								bind: {
+									to: 'name'
+								}
+							})
+						]
 					})
+
 				]
 			})
 

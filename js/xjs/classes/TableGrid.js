@@ -1,10 +1,9 @@
 function TableGrid(options){	
 	this.options = options;
 	
-	if(isset(this.init)) 
-		this.init({
-			before: true
-		});
+	if(isset(this.init)) this.init({
+		before: true
+	});
 }
 
 

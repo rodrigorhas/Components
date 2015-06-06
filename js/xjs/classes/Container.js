@@ -1,7 +1,7 @@
 function Container (options) {
 	this.options = options;
 
-	this.init();
+	if(isset(this.init)) this.init();
 }
 
 Container.extend(BaseComponent);

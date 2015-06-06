@@ -2,7 +2,7 @@ function Viewport (options) {
 	this.html = '<div class="view"></div>';
 	this.options = options;
 
-	this.init();
+	if(isset(this.init)) this.init();
 }
 
 Viewport.extend(BaseComponent);

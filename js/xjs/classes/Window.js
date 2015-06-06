@@ -1,7 +1,7 @@
 function Window (options) {
 	this.options = options;
 
-	this.init({
+	if(isset(this.init)) this.init({
 		before: true,
 		after: true
 	});
@@ -17,10 +17,12 @@ Window.prototype.close = function () {
 	dom.remove();
 
 	console.debug('window closed and removed')
+
+	delete this;
 }
 
 Window.prototype.before = function (dom){
-	$this = this;
+	var $this = this;
 	var c = (this.containment) ? this.containment : 'body';
 
 	max = 0;
