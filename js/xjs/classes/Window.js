@@ -46,12 +46,19 @@ Window.prototype.before = function (dom){
 
 		start: function (e, ui) {
 			ui.helper.addClass('moved');
+			ui.helper.css('opacity', 0.75);
+		},
+
+		stop: function (e, ui){
+			ui.helper.css('opacity', 1)
 		}
+
 	}).css('position', 'absolute');
 
 	dom.resizable({
 		minHeight: 38,
-		minWidth: 300
+		minWidth: 300,
+		handles: 'e, s, w, se, sw'
 	});
 
 	this.listen = {};
