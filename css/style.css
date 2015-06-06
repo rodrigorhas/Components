@@ -112,10 +112,12 @@ body {
 
 @keyframes ripple {
   100% {
-    transform: scale(2.5); } }
+    transform: scale(2.5);
+    opacity: 0.05; } }
 @-webkit-keyframes ripple {
   100% {
-    transform: scale(2.5); } }
+    transform: scale(2.5);
+    opacity: 0.05; } }
 .card {
   background-color: white;
   margin: 10px 8px;
@@ -253,5 +255,11 @@ ul.dropdown {
               height: 16px; }
               .window .inside-shadow .content .handler .btn-group .icon svg path {
                 fill: #7b7b7b; }
+
+.input {
+  padding: 8px 12px;
+  border: none;
+  background-color: #f2f2f2;
+  margin: 8px 0; }
 
 /*# sourceMappingURL=style.css.map */

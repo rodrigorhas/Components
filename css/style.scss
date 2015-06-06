@@ -152,11 +152,11 @@ body{font-family: 'Roboto'; background-color: rgb(238, 238, 238);}
 }
 
 @keyframes ripple {
-	100% {transform: scale(2.5);}
+	100% {transform: scale(2.5); opacity: 0.05}
 }
 
 @-webkit-keyframes ripple {
-	100% {transform: scale(2.5);}
+	100% {transform: scale(2.5); opacity: 0.05}
 }
 
 .card {
@@ -366,4 +366,11 @@ ul.dropdown {
 			}
 	    }
 	}
+}
+
+.input {
+	padding: 8px 12px;
+	border: none;
+	background-color: #f2f2f2;
+	margin: 8px 0;
 }

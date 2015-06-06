@@ -94,6 +94,8 @@ BaseComponent.prototype.init = function (run) {
 	if(isset(run) && isset(run.after))
 		dom = (isset(this.after(dom))) ? this.after(dom) : dom;
 
+	$components.push(this)
+
 	return this.html;
 };
 

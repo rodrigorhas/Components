@@ -113,6 +113,7 @@ x.prototype = {
 	init: function (options) {
 
 		$scope = window.X.bindings = {};
+		$components = window.X.components = [];
 
 		for(var property in options){
 			this[property] = options[property];
@@ -167,6 +168,37 @@ x.prototype = {
 	        obj[itemAttr] = domElement[domAttr];   
 	    }
 	    domElement[domAttr] = obj[itemAttr];
+	},
+
+	find: function (string, dom, returnObj) {
+		var p = string.split(':'),
+		p1 = p[0],
+		p2 = p[1],
+		res;
+
+		console.log(p, p1, p2)
+
+		if(p1 == 'parent') {
+			res = dom.parents(p2);
+		} else if(p1 == 'child') {
+			res = dom.find(p2);
+		} else if(p1 == 'sibling') {
+			res = dom.parent().children(p2);
+		} else if (p1 == 'global') {
+			res = $('body').find(p2);
+		}
+
+		var id = res.attr('id')
+
+		if(isset(returnObj)) {
+			for (var i = 0; i < $components.length; i++) {
+				if($components[i].id == id) {
+					res = {dom: res, obj: $components[i]}
+				}
+			};
+		}
+
+		return (isset(res)) ? res : false;
 	}
 }
 
