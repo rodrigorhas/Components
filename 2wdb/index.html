@@ -11,14 +11,25 @@
 	<p data-bind-people="age">{{people.age}}</p>
 	<p>{{people.name}}</p> -->
 
-	<input type="text" x-model="country" value="">
+	<div class="container" x-controller="main">
+		
+
+	<input type="text" x-model="country" value="germany">
 	<input type="text" x-model="foo" value="">
 
 	<p x-bind="country"></p>
 
+	</div>
+
+	<div class="container" x-controller="secondary">
+	
+		<input type="text" x-model="country" value="">
+
+	</div>
+
 	<script src="js/jquery.min.js"></script>	
 	<script src="js/Main.js"></script>	
-	<!-- <script src="js/Binder.js"></script>-->
+	<script src="js/Controller.js"></script>
 	<script src="js/Model.js"></script>
 	<script src="js/Scope.js"></script>	
 	<script src="js/Inspector.js"></script>	

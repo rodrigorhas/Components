@@ -1,5 +1,11 @@
-/*var u = new Model('people');
-u.set('name', '20')
-u.set('age', '22')*/
+Controller.new('main', function($scope){
 
-Inspector.match();
+	$scope.foo = 20;
+
+})
+
+Controller.new('secondary', function($scope){
+
+	$scope.country = 'deuschs';
+
+})
