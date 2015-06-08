@@ -6,7 +6,7 @@ Scope.prototype = {
 	$$watch : function () {
 		var __this = this;
 		Object.observe(this, function (c) {
-			Model.apply(c, __this.controller);
+			View.apply(c, __this.controller);
 		})
 	}
 }

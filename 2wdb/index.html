@@ -7,13 +7,19 @@
 <body>
 
 	<div class="container" x-controller="main">
+		<div x-view="mainView">
+			
+			<input type="text" x-model="country" value="germany">
+			<input type="text" x-model="foo" value="">
 
-		<input type="text" x-model="country" value="germany">
-		<input type="text" x-model="foo" value="">
+			<p x-bind="country"></p>
+		</div>
 
-		<p x-bind="country"></p>
+		<div x-view="anotherView">
+			Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus, provident!
+		</div>
 
-	</div>
+	</div> 
 
 	<div class="container" x-controller="secondary">
 	
@@ -23,10 +29,21 @@
 
 	<script src="js/jquery.min.js"></script>	
 	<script src="js/Main.js"></script>	
-	<script src="js/Controller.js"></script>
+	<script src="js/xjs/utils/Extend.js"></script>	
+
+
 	<script src="js/Model.js"></script>
+	<script src="js/Store.js"></script>
+	<script src="js/Stores.js"></script>
+	<script src="js/Controller.js"></script>
+	<script src="js/View.js"></script>
 	<script src="js/Scope.js"></script>	
 	<script src="js/Inspector.js"></script>	
+
+	<!-- my models -->
+	<script src="js/model/mainModel.js"></script>
+	
+	<!-- my controllers -->
 	<script src="js/app.js"></script>	
 </body>
 </html>

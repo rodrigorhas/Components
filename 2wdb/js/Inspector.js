@@ -12,18 +12,21 @@ Inspector.prototype = {
 		this.matches = controllerObj.find('[x-model]:input'); // update matches on every call
 
 		var $scope = new Scope(controllerObj);
+		window.Model[controller] = $scope;
+		$scope.$$watch();
 
 		for (var i = 0; i < this.matches.length; i++) { // for each match
 			var m = $(this.matches[i]); // allocate into a variable called m
 			var ma = m.attr('x-model'); // and catch the attr [x-model]
 
-			m.on('keyup keydown',function(event) {
+			m.on('keydown keyup',function(event) {
 				$scope[$(this).attr('x-model')] = $(this).val()
 			});
 
 			$scope[ma] = m.val();
 		};
 
+		$scope.$$watch();
 		return $scope;
 	}
 }
