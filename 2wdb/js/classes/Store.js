@@ -79,13 +79,112 @@ function Store (object) {
 			if (isset(callback)) callback()
 		},
 
-		select : function (query, callback) {
+		select : function (query, config, callback) {
+
 			if(_this.requesting) { // se estiver fazendo um requisiçao, manda pra stackList
-				return _this.stack(_this.newHash(15), function (){ var __this = _this;  __this.data.select(id, object, callback);});
+				return _this.stack(_this.newHash(15), function (){ var __this = _this;  __this.data.select(query, config,callback);});
 			}
 
-			if (isset(callback)) callback()
+			var defaultOptions = {
+				cs : false,
+				io : false,
+				log : false
+			}
 
+			if(typeof config != "object") {
+
+				callback = config;
+				config = defaultOptions;
+
+			} else if(typeof config == "function") {
+				callback = config;
+
+			} else {
+
+				if ( !isset(config.cs) ) {
+					config.cs = defaultOptions.cs;
+				}
+
+				if ( !isset(config.io) ) {
+					config.io = defaultOptions.io;
+				}
+
+				if ( !isset(config.log) ) {
+					config.log = defaultOptions.log;
+				}
+			}
+
+			config.cs = (!config.cs) ? 'i' : ''; // seta a flag do regexp
+
+			var q = query.split(':'); // main string
+			var result = []; // array de resultados
+
+			var field = q[0]; // campos
+			var search = q[1]; // pesquisa
+
+			if(search.split(' ').length > 1) {// caso tenha mais de uma palavra
+				search = search.replace(/\s\s+/g, ' '); // retira os dupes de espcaço
+				search = search.split(' ') // split pro espaco (separa as palavras)
+				var multi = true; // diz que a pesquisa é por varias palavras
+			}
+
+			for (var i = 0; i < _this.dataset.fields.length; i++) { // para cada campo
+				var f = _this.dataset.fields[i]; // shortname
+				f = f.name.toLowerCase();  // bota os campos em lowercase pra nao ter conflito (Object <=> Model)
+
+				if(f == field) { // se achar o campo de acordo com o requsitado
+					var index = i;
+				}
+			};
+
+			for ( var prop in _this.dataset.rows ) { // para cada linha
+				var row = _this.dataset.rows; // shortname
+				var val = row[prop].values[index]; // pega o valor da linha batendo com o campo requisitado
+
+				if (isset(multi)) { // se for pesquisa multua
+
+					var temp = ""; // nova variavel, "" => pra nao dar undefined no +=
+					var last = search[search.length-1]; // ultima palavra
+					for (var i = 0; i < search.length-1; i++) { // pra cada palavra
+						temp += search[i] + '|'; // adiciona o pipe pra fazer a string do regex
+					};
+
+					temp += last; // adiciona o ultimo
+
+					if(config.oi) { // oi true and multi
+
+						if(new RegExp(temp, config.cs + 'g').test(val)){
+							result.push(prop);
+						}
+
+					} else { // oi false and multi
+						if(new RegExp(temp, config.cs + 'g').test(val)){
+							result.push(row[prop]);
+						}
+					}
+				} else { // not mult
+					if(config.oi) { // only indexes
+						if(new RegExp(search, config.cs + 'g').test(val)){
+							result.push(prop);
+						}
+					} else { // row
+						if(new RegExp(search, config.cs + 'g').test(val)){
+							result.push(row[prop]);
+						}
+					}
+				}
+
+
+			}
+
+			if(result) {
+				if(config.log) {
+					console.log(result)
+				} else {
+					if (isset(callback)) callback()
+					return result;
+				}
+			}
 		}
 	}
 

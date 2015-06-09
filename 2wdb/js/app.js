@@ -2,8 +2,9 @@ Main.controller('main', {views: [], stores: ['mainStore']}, function($scope, $st
 
 	$store.data.insert(10, [10, 'alan', 'design']);
 	$store.data.insert(11, [11, 'bruno', 'dentista']);
+	$store.data.insert(12, [12, 'alan rodrigo', 'dentista']);
 
-	$store.data.update(11, {job: 'pintor', name: 'brandao'}, logAll);
+	$store.data.update(11, {job: 'pintor', name: 'Alan'}, logAll);
 
 	function logAll () {
 		/*for (var i = 0; i < $store.dataset.fields.length; i++) {
@@ -18,7 +19,10 @@ Main.controller('main', {views: [], stores: ['mainStore']}, function($scope, $st
 
 	// loadFile function example
 	// see the consoler for more info
-	Main.loadFile('Main.app.stores.finanStore.storage');
+
+	//Main.loadFile('Main.app.stores.mainStore');
+
+	$store.data.select('name|country:rodrigo', {oi: true});
 
 })
 
@@ -26,4 +30,4 @@ Main.controller('secondary', {views: [], stores: ['mainStore']}, function($scope
 
 	$scope.country = 'deuschs';
 
-})
+});
