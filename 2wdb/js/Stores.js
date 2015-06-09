@@ -1,11 +1,12 @@
 function Stores () {}
 
-Stores.prototype.add = function (store) {
-	this[store.name] = store;
+Stores.prototype.add = function (object) {
+
+	this[object.name] = new Store(object);
 }
 
 Stores.prototype.get = function (storeName) {
 	return this[storeName]
 }
 
-var Stores = new Stores();
+Main.Stores = new Stores();
