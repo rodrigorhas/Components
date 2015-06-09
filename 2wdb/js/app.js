@@ -2,23 +2,30 @@ Controller.new('main', {}, function($scope, $store){
 
 	Stores.add(new Store({
 		name: 'bla',
-		model: BlaModel,
-		/*proxy: {
+		model: Model.BlaModel,
+		proxy: {
 			select: '../select.json',
 			insert: '../select.json',
-		}*/
+		}
 	}));
 
 	var bla = $scope.bla = Stores.get('bla');
 
-	bla.data.insert(3, [3, 'alan', 'design']);
-	bla.data.insert(4, [4, 'bruno', 'dentista']);
+	bla.data.insert(10, [10, 'alan', 'design']);
+	bla.data.insert(11, [11, 'bruno', 'dentista']);
 
-	bla.data.update(4, {job: 'pintor', name: 'brandao'})
+	bla.data.update(11, {job: 'pintor', name: 'brandao'}, logAll);
 
-	for (var i = 0; i < bla.dataset.fields.length; i++) {
-		console.log(bla.dataset.fields[i].name)
-	};
+	function logAll () {
+		for (var i = 0; i < bla.dataset.fields.length; i++) {
+			var field = bla.dataset.fields[i].name;
+
+			for (var row in bla.dataset.rows) {
+				var value = bla.dataset.rows[row];
+				console.log(field , value.values[i]);
+			};
+		};
+	}
 
 })
 

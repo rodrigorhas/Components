@@ -10,10 +10,10 @@ function Store (object) {
 	var _this = this;
 
 	this.data = {
-		insert : function (id, values) {
+		insert : function (id, values, callback) {
 
 			if(_this.requesting) { // se estiver fazendo um requisiçao, manda pra stackList
-				return _this.stack(id, function (){ var __this = _this;  __this.data.insert(id, values);});
+				return _this.stack(_this.newHash(15), function (){ var __this = _this;  __this.data.insert(id, values, callback);});
 			}
 
 			// caso nao esteja fazendo uma requisiçao
@@ -28,12 +28,14 @@ function Store (object) {
 
 			_this.dataset.rows[model.id] = model; // insere a row no objeto rows do dataset
 
+			if (isset(callback)) callback()
+
 		},
 
-		delete: function (id) {
+		delete: function (id, callback) {
 
 			if(_this.requesting) { // se estiver fazendo um requisiçao, manda pra stackList
-				return _this.stack(id, function (){ var __this = _this;  __this.data.delete(id);});
+				return _this.stack(_this.newHash(15), function (){ var __this = _this;  __this.data.delete(id, callback);});
 			}
 
 			var dataset = _this.dataset.rows;
@@ -43,12 +45,14 @@ function Store (object) {
 					delete dataset[row];
 				}
 			}
+
+			if (isset(callback)) callback()
 		},
 
-		update: function (id, object) {
+		update: function (id, object, callback) {
 
 			if(_this.requesting) { // se estiver fazendo um requisiçao, manda pra stackList
-				return _this.stack(id, function (){ var __this = _this;  __this.data.update(id, object);});
+				return _this.stack(_this.newHash(15), function (){ var __this = _this;  __this.data.update(id, object, callback);});
 			}
 
 			var dataset = _this.dataset;
@@ -71,6 +75,17 @@ function Store (object) {
 					}
 				}
 			}
+
+			if (isset(callback)) callback()
+		},
+
+		select : function (query, callback) {
+			if(_this.requesting) { // se estiver fazendo um requisiçao, manda pra stackList
+				return _this.stack(_this.newHash(15), function (){ var __this = _this;  __this.data.select(id, object, callback);});
+			}
+
+			if (isset(callback)) callback()
+
 		}
 	}
 
@@ -80,25 +95,27 @@ function Store (object) {
 
 Store.prototype = {
 	update : function () {
-		console.debug('updating data from store -> ' + this.name );
-		console.debug(this.push, this.pull)
+		//console.debug('updating data from store -> ' + this.name );
+		//console.debug(this.push, this.pull)
 	},
 
 	push: function () {
-		console.log('pushing all changes from store -> ' + this.name + ', throught ' + this.proxy.insert)
+		//console.log('pushing all changes from store -> ' + this.name + ', throught ' + this.proxy.insert)
 	},
 
 	pull: function () {
 		var _this = this;
 		this.requesting = true;
 
-		console.log('pulling all changes from store -> ' + this.name + ', throught ' + this.proxy.select);
+		//console.log('pulling all changes from store -> ' + this.name + ', throught ' + this.proxy.select);
 
 		$.ajax({
 			url: this.proxy.select,
 			success: function (response) {
 				_this.requesting = false;
 				if(typeof response == "string") response = JSON.parse(response); response = response.data
+
+				console.log(response)
 
 				//console.debug('data received -> ', response);
 				_this.dataset.rows = response;
@@ -121,5 +138,18 @@ Store.prototype = {
 		for (var current in this.stackList) {
 			this.stackList[current]()
 		};
-	}
+	},
+
+	newHash: function (L){
+		if(!isset(L)) L = 10;
+	    var s= '';
+	    var randomchar=function(){
+	    	var n= Math.floor(Math.random()*62);
+	    	if(n<10) return n; //1-10
+	    	if(n<36) return String.fromCharCode(n+55); //A-Z
+	    	return String.fromCharCode(n+61); //a-z
+	    }
+	    while(s.length< L) s+= randomchar();
+	    return s;
+	},
 }
