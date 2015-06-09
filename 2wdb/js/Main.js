@@ -42,6 +42,24 @@ Main.prototype = {
 
 		window.Model[name] = newFn;
 
+	},
+
+	loadFile: function (namespace, base) {
+		var pa = namespace.split('.');
+
+		var file = pa[pa.length-1];
+		var extension = '.js';
+
+		var path = "";
+
+		for (var i = 1; i < pa.length - 1 ; i++) {
+			path += pa[i] + '/';
+			console.log('folder => ' + pa[i]);
+		};
+		console.debug('file => ' +file)
+
+		console.info('Final path url => ' + path + file + extension)
+
 	}
 
 }

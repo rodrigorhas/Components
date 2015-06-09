@@ -115,8 +115,6 @@ Store.prototype = {
 				_this.requesting = false;
 				if(typeof response == "string") response = JSON.parse(response); response = response.data
 
-				console.log(response)
-
 				//console.debug('data received -> ', response);
 				_this.dataset.rows = response;
 
