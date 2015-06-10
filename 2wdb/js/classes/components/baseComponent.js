@@ -11,7 +11,7 @@ BaseComponent.prototype.init = function (run) {
 	var dom = $(this.html);
 
 	// Create a new hash and attach to this component
-	this.id = X.newHash(10);
+	this.id = Main.util.newHash(10);
 	dom.attr('id', this.id);
 
 	if(isset(run) && isset(run.before))
@@ -41,36 +41,6 @@ BaseComponent.prototype.init = function (run) {
 	if(this.bind && this.bind.to)
 		dom.attr('bind', 'textContent:' + this.bind.to);
 
-	$(document).on('x-render', function (){
-		var b = window.X.bindings;
-		var id = __this.id;
-		var bind = __this.bind;
-
-		var name = (isset(bind) && isset(bind.name)) ? bind.name : false;
-		var value = (isset(bind) && isset(bind.value)) ? bind.value : false;
-		var to = (isset(bind) && isset(bind.to)) ? bind.to : false;
-
-			if(name){
-
-				X.bind(id, value);
-				b[name] = bind;
-				console.log(b);
-
-			}else if (to){
-				
-				var res;
-				for (var prop in b) {
-					console.log('log');
-					if(b[prop].name == to){
-						res = b[prop].value;
-						break;
-					}
-				};
-
-				X.bind(id, res);
-			}
-	});
-
 	if(isset(run) && isset(run.during))
 		dom = (isset(this.during(dom))) ? this.during(dom) : dom;
 
@@ -94,7 +64,7 @@ BaseComponent.prototype.init = function (run) {
 	if(isset(run) && isset(run.after))
 		dom = (isset(this.after(dom))) ? this.after(dom) : dom;
 
-	$components.push(this)
+	window.Main.components.push(this)
 
 	return this.html;
 };

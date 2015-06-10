@@ -10,7 +10,7 @@ function Window (options) {
 
 Window.extend(BaseComponent);
 
-Window.prototype.html = '<div class="window"><div class="inside-shadow"><div class="handler"></div><div class="content"></div></div></div>';
+Window.prototype.html = '<div class="window focused"><div class="inside-shadow"><div class="handler"></div><div class="content"></div></div></div>';
 
 Window.prototype.close = function () {
 	var dom = this.html;
@@ -42,22 +42,35 @@ Window.prototype.moveToFirst = function (dom){
 
 	$('.window').each(function() {
 		var z = parseInt( $( this ).css( "z-index" ), 10 );
+		$(this).addClass('unfocused').removeClass('focused');
 		max = Math.max( max, z );
 	});
 		
 	dom.css("z-index", max + 2 );
+	dom.removeClass('unfocused').addClass('focused');
 }
 
 Window.prototype.before = function (dom){
 	var __this = this;
 	this.renderTo = '.content'
-	var c = (this.draggable && this.draggable.containment) ? this.draggable.containment : 'body';	
+	//var c = (this.draggable && this.draggable.containment) ? this.draggable.containment : 'body';	
+	var c = [0,0,0, 0];
 
 	this.moveToFirst(dom);
 
 	var bgs = '.handler .btn-group',
 	bgo = dom.find(bgs);
 	bgo.disableSelection();
+
+	setTimeout(function () {
+		console.log(dom[0].offsetWidth)
+		var wh = $(window).height();
+		var ww = $(window).width()
+
+		dom.draggable({
+			containment: [0,0, ww - dom.width(), wh - dom.find('.handler').height()]
+		})
+	},1);
 
 	dom.draggable({
 		handle: dom.find('.handler'),
@@ -66,11 +79,19 @@ Window.prototype.before = function (dom){
 		cancel: bgs,
 
 		start: function (e, ui) {
+			if(ui.helper.hasClass('fs')) {
+				$(window).trigger('mouseup');
+				dom.draggable( 'disable' );
+				return
+			}
+
 			ui.helper.css('opacity', 0.75);
 		},
 
 		stop: function (e, ui){
-			ui.helper.css('opacity', 1)
+			ui.helper.css('opacity', 1);
+			if(ui.helper.hasClass('fs')) dom.draggable( 'enable' );
+			__this.moveToFirst(dom)
 		}
 
 	}).css('position', 'absolute');
@@ -85,7 +106,7 @@ Window.prototype.before = function (dom){
 	this.defaults = {};
 
 	this.listen.click = function (e, target) {
-	    __this.moveToFirst(dom)
+	    __this.moveToFirst(dom);
 	}
 
 	dom.find('.handler').append('<div class="btn-group"></div>');  // add the btn-group for else case

@@ -1,3 +1,12 @@
+var app = Main.application({
+	requires: [
+	'Viewport', 'Toolbar','Button', 'Card',
+	'Container','Label', 'PageDivider',
+	'TableGrid', 'Checkbox', 'Input', 'Window',
+	'Grid', 'ShortcutToolbar'
+	]
+})
+
 Main.controller('main', {views: [], stores: ['mainStore']}, function($scope, $store){
 
 	$store.data.insert(10, [10, 'alan', 'design']);

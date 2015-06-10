@@ -27,7 +27,7 @@ Viewport.prototype.init = function () {
 
 	dom.appendTo($('body'));
 
-	$(document).trigger('x-render')
+	$(document).trigger('x-render');
 
 	if(dom.find('.btn').length > 0){
 		X.effects.loadRipple();

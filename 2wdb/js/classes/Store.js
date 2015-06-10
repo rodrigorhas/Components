@@ -3,6 +3,8 @@ function Store (object) {
 	this.model = object.model;
 	this.dataset = {fields: [], rows: {}};
 	this.proxy = (object.proxy) ? object.proxy: false;
+	this.info = {rows: 0, columns: 0, headers: []};
+	this.info.size = this.info.rows * this.info.columns
 
 	this.requesting = false;
 	this.stackList = {};
@@ -13,7 +15,7 @@ function Store (object) {
 		insert : function (id, values, callback) {
 
 			if(_this.requesting) { // se estiver fazendo um requisiçao, manda pra stackList
-				return _this.stack(_this.newHash(15), function (){ var __this = _this;  __this.data.insert(id, values, callback);});
+				return _this.stack(Main.util.newHash(15), function (){ var __this = _this;  __this.data.insert(id, values, callback);});
 			}
 
 			// caso nao esteja fazendo uma requisiçao
@@ -28,6 +30,8 @@ function Store (object) {
 
 			_this.dataset.rows[model.id] = model; // insere a row no objeto rows do dataset
 
+			_this.updateInfo();
+
 			if (isset(callback)) callback()
 
 		},
@@ -35,7 +39,7 @@ function Store (object) {
 		delete: function (id, callback) {
 
 			if(_this.requesting) { // se estiver fazendo um requisiçao, manda pra stackList
-				return _this.stack(_this.newHash(15), function (){ var __this = _this;  __this.data.delete(id, callback);});
+				return _this.stack(Main.util.newHash(15), function (){ var __this = _this;  __this.data.delete(id, callback);});
 			}
 
 			var dataset = _this.dataset.rows;
@@ -46,13 +50,15 @@ function Store (object) {
 				}
 			}
 
+			_this.updateInfo();
+
 			if (isset(callback)) callback()
 		},
 
 		update: function (id, object, callback) {
 
 			if(_this.requesting) { // se estiver fazendo um requisiçao, manda pra stackList
-				return _this.stack(_this.newHash(15), function (){ var __this = _this;  __this.data.update(id, object, callback);});
+				return _this.stack(Main.util.newHash(15), function (){ var __this = _this;  __this.data.update(id, object, callback);});
 			}
 
 			var dataset = _this.dataset;
@@ -76,13 +82,15 @@ function Store (object) {
 				}
 			}
 
+			_this.updateInfo();
+
 			if (isset(callback)) callback()
 		},
 
 		select : function (query, config, callback) {
 
 			if(_this.requesting) { // se estiver fazendo um requisiçao, manda pra stackList
-				return _this.stack(_this.newHash(15), function (){ var __this = _this;  __this.data.select(query, config,callback);});
+				return _this.stack(Main.util.newHash(15), function (){ var __this = _this;  __this.data.select(query, config,callback);});
 			}
 
 			var defaultOptions = {
@@ -125,7 +133,7 @@ function Store (object) {
 			if(search.split(' ').length > 1) {// caso tenha mais de uma palavra
 				search = search.replace(/\s\s+/g, ' '); // retira os dupes de espcaço
 				search = search.split(' ') // split pro espaco (separa as palavras)
-				var multi = true; // diz que a pesquisa é por varias palavras
+				var multiSearch = true; // diz que a pesquisa é por varias palavras
 			}
 
 			for (var i = 0; i < _this.dataset.fields.length; i++) { // para cada campo
@@ -141,7 +149,7 @@ function Store (object) {
 				var row = _this.dataset.rows; // shortname
 				var val = row[prop].values[index]; // pega o valor da linha batendo com o campo requisitado
 
-				if (isset(multi)) { // se for pesquisa multua
+				if (isset(multiSearch)) { // se for pesquisa multua
 
 					var temp = ""; // nova variavel, "" => pra nao dar undefined no +=
 					var last = search[search.length-1]; // ultima palavra
@@ -151,13 +159,13 @@ function Store (object) {
 
 					temp += last; // adiciona o ultimo
 
-					if(config.oi) { // oi true and multi
+					if(config.oi) { // oi true and multiSearch
 
 						if(new RegExp(temp, config.cs + 'g').test(val)){
 							result.push(prop);
 						}
 
-					} else { // oi false and multi
+					} else { // oi false and multiSearch
 						if(new RegExp(temp, config.cs + 'g').test(val)){
 							result.push(row[prop]);
 						}
@@ -237,16 +245,38 @@ Store.prototype = {
 		};
 	},
 
-	newHash: function (L){
-		if(!isset(L)) L = 10;
-	    var s= '';
-	    var randomchar=function(){
-	    	var n= Math.floor(Math.random()*62);
-	    	if(n<10) return n; //1-10
-	    	if(n<36) return String.fromCharCode(n+55); //A-Z
-	    	return String.fromCharCode(n+61); //a-z
-	    }
-	    while(s.length< L) s+= randomchar();
-	    return s;
+	updateInfo : function (object) {
+
+		function size (obj) {
+		    var size = 0, key;
+		    for (key in obj) {
+		        if (obj.hasOwnProperty(key)) size++;
+		    }
+		    return size;
+		};
+
+		var rows = size(this.dataset.rows);
+		var columns = this.dataset.fields.length;
+
+		var headers = [];
+
+		for (var i = 0; i < this.dataset.fields.length; i++) {
+			headers.push(this.dataset.fields[i].name);
+		};
+
+		this.info = {rows: rows, columns: columns, size: rows * columns, headers: headers}
+
+		console.log(this.info)
 	},
+
+	showInfo : function () {
+		for (var property in this.info) {
+			if(property == 'headers') {
+				for (var i = 0; i < this.dataset.fields.length; i++) {
+					this.info[property].push(this.dataset.fields[i].name);
+				};
+			}
+			console.log(property + ": " + this.info[property])
+		}
+	}
 }
