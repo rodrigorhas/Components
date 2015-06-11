@@ -9,7 +9,7 @@ Inspector.prototype = {
 
 		if(!controllerObj.length) return console.error('Controller -> ' + controller + ': not found !');
 
-		this.matches = controllerObj.find('[x-model]:input'); // update matches on every call
+		this.matches = controllerObj.find('[x-model]:input, [x-bind]'); // update matches on every call
 
 		var $scope = new Scope(controllerObj);
 		window.Model[controller] = $scope;
@@ -19,7 +19,7 @@ Inspector.prototype = {
 			var m = $(this.matches[i]); // allocate into a variable called m
 			var ma = m.attr('x-model'); // and catch the attr [x-model]
 
-			m.on('keydown keyup',function(event) {
+			m.on('keydown keyup inputchange',function(event) {
 				$scope[$(this).attr('x-model')] = $(this).val()
 			});
 
@@ -27,7 +27,7 @@ Inspector.prototype = {
 		};
 
 		$scope.$$watch();
-		return $scope;
+		return {scp: $scope, view: controllerObj};
 	}
 }
 

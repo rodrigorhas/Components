@@ -25,11 +25,28 @@ Viewport.prototype.init = function () {
 		this.html = dom;
 	}
 
+	if(this.controller) {
+		var c = this.controller;
+
+		var cs = "";
+		for (var i = 0; i < c.length; i++) {
+			if(i == 0 && c.length == 1) {
+				cs = c[i];
+			} else if (i == 0 && c.length > 1 && i != c.length-1 ){
+				cs += c[i] + ":";
+			} else if(i == c.length -1) {
+				cs += c[i];
+			}
+		};
+
+		dom.attr('x-controller', cs)
+	}
+
 	dom.appendTo($('body'));
 
 	$(document).trigger('x-render');
 
 	if(dom.find('.btn').length > 0){
-		X.effects.loadRipple();
+		Main.effects.loadRipple();
 	}
 }

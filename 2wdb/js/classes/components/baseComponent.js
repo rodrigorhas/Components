@@ -17,6 +17,11 @@ BaseComponent.prototype.init = function (run) {
 	if(isset(run) && isset(run.before))
 		dom = (isset(this.before(dom))) ? this.before(dom) : dom;
 
+	if(this.bind) {
+		if(this.bind.model) dom.attr('x-model', this.bind.model)
+		if(this.bind.to) dom.attr('x-bind', this.bind.to)
+	}
+
 	if(this.type)
 		dom.attr(this.type, '');
 

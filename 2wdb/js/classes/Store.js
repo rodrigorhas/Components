@@ -9,6 +9,8 @@ function Store (object) {
 	this.requesting = false;
 	this.stackList = {};
 
+	this.changes = [];
+
 	var _this = this;
 
 	this.data = {
@@ -31,6 +33,8 @@ function Store (object) {
 			_this.dataset.rows[model.id] = model; // insere a row no objeto rows do dataset
 
 			_this.updateInfo();
+
+			_this.logChanges({type: 'insert', id: model.id, added: model.values, length: Object.size(_this.dataset.rows) })
 
 			if (isset(callback)) callback()
 
@@ -208,6 +212,10 @@ Store.prototype = {
 
 	push: function () {
 		//console.log('pushing all changes from store -> ' + this.name + ', throught ' + this.proxy.insert)
+
+		if(this.changes.length == 0)  return;
+
+		console.log(JSON.stringify(this.changes));
 	},
 
 	pull: function () {
@@ -247,15 +255,15 @@ Store.prototype = {
 
 	updateInfo : function (object) {
 
-		function size (obj) {
+		Object.size = function (obj) {
 		    var size = 0, key;
-		    for (key in obj) {
-		        if (obj.hasOwnProperty(key)) size++;
+		    for (key in this) {
+		        if (this.hasOwnProperty(key)) size++;
 		    }
 		    return size;
 		};
 
-		var rows = size(this.dataset.rows);
+		var rows = Object.size(this.dataset.rows);
 		var columns = this.dataset.fields.length;
 
 		var headers = [];
@@ -266,7 +274,6 @@ Store.prototype = {
 
 		this.info = {rows: rows, columns: columns, size: rows * columns, headers: headers}
 
-		console.log(this.info)
 	},
 
 	showInfo : function () {
@@ -278,5 +285,27 @@ Store.prototype = {
 			}
 			console.log(property + ": " + this.info[property])
 		}
+	},
+
+	logChanges : function (change) {
+		//console.log(change.id, change.type, change.added, change.deleted, change.length)
+		this.changes.push(change);
+	},
+
+	getData : function (tostring) {
+		var rows = [];
+
+		for (var property in this.dataset.rows) {
+			var r = this.dataset.rows[property];
+			rows.push(r.values);
+		}
+
+		if(tostring) {
+			var o = {fields: this.dataset.fields, lines: rows};
+			return JSON.stringify(o);
+		} else {
+			return {fields: this.dataset.fields, lines: rows};
+		}
+
 	}
 }

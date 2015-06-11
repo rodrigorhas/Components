@@ -7,7 +7,11 @@ var app = Main.application({
 	]
 })
 
-Main.controller('main', {views: [], stores: ['mainStore']}, function($scope, $store){
+var scp;
+
+Main.controller('main', {views: [], stores: ['mainStore']}, function($scope, $store, $view){
+
+	console.log($view)
 
 	$store.data.insert(10, [10, 'alan', 'design']);
 	$store.data.insert(11, [11, 'bruno', 'dentista']);
@@ -31,12 +35,10 @@ Main.controller('main', {views: [], stores: ['mainStore']}, function($scope, $st
 
 	//Main.loadFile('Main.app.stores.mainStore');
 
-	$store.data.select('name|country:rodrigo', {oi: true});
+	$scope.names = 'rodrigo'
+
+	//$store.data.select('name|country:rodrigo', {oi: true});
+
+	scp = $scope;
 
 })
-
-Main.controller('secondary', {views: [], stores: ['mainStore']}, function($scope, $store){
-
-	$scope.country = 'deuschs';
-
-});

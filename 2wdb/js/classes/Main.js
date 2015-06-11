@@ -3,25 +3,35 @@ function Main () {
 }
 
 Main.prototype = {
-	controller: function (name, config, fn) {
-		if( isset(config) && isset(config.stores) ){
-			var stores = {};
+	controller: function (controllerName, config, fn) {
+		var _this = this;
 
-			if(config.stores.length > 1 ){
-				for (var i = 0; i < config.stores.length; i++) {
-					var name = config.stores[i];
-					stores[name] = Stores.get(name);
-				};
-			} else {
-				stores = this.Stores.get(config.stores[0]);
-			}
-		}
+		$(document).on('x-ready', function () {
+			setTimeout(function () {
 
-		if(!window.Model) window.Model = {};
-		var scp = Inspector.match(name);
-		if(typeof scp == 'object'){
-			fn(scp, stores);
-		}
+					if( isset(config) && isset(config.stores) ){
+						var stores = {};
+
+						if(config.stores.length > 1 ){
+							for (var i = 0; i < config.stores.length; i++) {
+								var name = config.stores[i];
+								stores[name] = Stores.get(name);
+							};
+						} else {
+							stores = _this.Stores.get(config.stores[0]);
+						}
+					}
+
+					if(!window.Model) window.Model = {};
+					
+					var res = Inspector.match(controllerName);
+					if(typeof res.scp == 'object'){
+						fn(res.scp, stores, res.view);
+					}
+			},10)
+		})
+
+
 	},
 
 	model : function (name, object) {
@@ -45,7 +55,7 @@ Main.prototype = {
 	},
 
 	view: function (fn) {
-		$(document).on('x-ready', fn)
+		$(document).on('x-ready', fn);
 	},
 
 	loadFile: function (namespace, base) {
@@ -77,6 +87,25 @@ Main.prototype = {
 		    script.onerror = callback;
 		    head.appendChild(script);
 		}
+
+		$.event.special.inputchange = {
+		    setup: function() {
+		        var self = this, val;
+		        $.data(this, 'timer', window.setInterval(function() {
+		            val = self.value;
+		            if ( $.data( self, 'cache') != val ) {
+		                $.data( self, 'cache', val );
+		                $( self ).trigger( 'inputchange' );
+		            }
+		        }, 20));
+		    },
+		    teardown: function() {
+		        window.clearInterval( $.data(this, 'timer') );
+		    },
+		    add: function() {
+		        $.data(this, 'cache', this.value);
+		    }
+		};
 
 		window.Main.components = [];
 
@@ -112,6 +141,81 @@ Main.prototype = {
 		}
 	},
 
+	find: function (string, dom, returnObj) {
+		var p = string.split(':'),
+		p1 = p[0],
+		p2 = p[1],
+		res;
+
+		console.log(p, p1, p2)
+
+		if(p1 == 'parent') {
+			res = dom.parents(p2);
+		} else if(p1 == 'child') {
+			res = dom.find(p2);
+		} else if(p1 == 'sibling') {
+			res = dom.parent().children(p2);
+		} else if (p1 == 'global') {
+			res = $('body').find(p2);
+		}
+
+		var id = res.attr('id')
+
+		if(isset(returnObj)) {
+			for (var i = 0; i < window.Main.components.length; i++) {
+				if(window.Main.components[i].id == id) {
+					res = {dom: res, obj: window.Main.components[i]}
+				}
+			};
+		}
+
+		return (isset(res)) ? res : false;
+	},
+
+	shortTb: {
+		return: function (id) {
+			for (var i = 0; i < window.Main.components.length; i++) {
+				if(window.Main.components[i].constructor.name == 'ShortcutToolbar'){
+					var c = window.Main.components[i];
+					if(isset(id)) {
+						for (var u = 0; u < c.items.length; u++) {
+							if(c.items[u].refId == id){
+								return c.items[u];
+							}
+						};
+					} else {
+						return window.Main.components[i];
+					}
+				}
+			};
+		},
+
+		push: function (item) {
+			for (var i = 0; i < window.Main.components.length; i++) {
+				if(window.Main.components[i].constructor.name == 'ShortcutToolbar'){
+					window.Main.components[i].items.push(item);
+				}
+			};
+		},
+
+		splice: function (id, index, length) {
+			for (var i = 0; i < window.Main.components.length; i++) {
+				if(window.Main.components[i].constructor.name == 'ShortcutToolbar'){
+					var c = window.Main.components[i];
+					if(isset(id)){
+						for (var u = 0; u < c.items.length; u++) {
+							if(c.items[u].refId == id){
+								c.items.splice(u, 1);
+							}
+						};
+					} else {
+						c.items.splice(index, length);
+					}
+				}
+			};
+		},
+	},
+	
 	effects: {
 		loadRipple: function (){
 			var trasholder;
@@ -195,12 +299,3 @@ Main.prototype = {
 }
 
 var Main = new Main();
-
-Main.application({
-	requires: [
-	'Viewport', 'Toolbar','Button', 'Card',
-	'Container','Label', 'PageDivider',
-	'TableGrid', 'Checkbox', 'Input', 'Window',
-	'Grid', 'ShortcutToolbar'
-	]
-})
