@@ -19,7 +19,10 @@ Main.view(function () {
 						listen: {
 							click: function (e, dom) {
 								var input = Main.find('sibling:input', dom, true);
-								console.log(input.dom.val(e.timeStamp))
+								var v = input.dom.val();
+								var store = Main.Stores.get('mainStore');
+								var randId = Math.floor(Math.random()*62);
+								store.data.insert(randId, [randId, v, Main.util.newHash(5)])
 							}
 						}
 					}),
@@ -33,9 +36,9 @@ Main.view(function () {
 			}),
 
 			new Card({
-					items: [
-						new TableGrid({
-						data: Main.Stores.mainStore.getData(true)
+				items: [
+					new TableGrid({
+						data: 'mainStore'
 					})
 				]
 			})

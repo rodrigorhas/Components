@@ -8,6 +8,7 @@ function Store (object) {
 
 	this.requesting = false;
 	this.stackList = {};
+	this.binds = [];
 
 	this.changes = [];
 
@@ -290,6 +291,13 @@ Store.prototype = {
 	logChanges : function (change) {
 		//console.log(change.id, change.type, change.added, change.deleted, change.length)
 		this.changes.push(change);
+		this.triggerUpdate();
+	},
+
+	triggerUpdate : function () {
+		for (var i = 0; i < this.binds.length; i++) {
+			$('#' + this.binds[i]).trigger('update');
+		};
 	},
 
 	getData : function (tostring) {
