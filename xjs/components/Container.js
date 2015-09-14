@@ -1,7 +1,7 @@
 function Container (options) {
 
 	this._config(options);
-	this._dom = $('<div class="container"></div>');
+	this._dom = $('<div class="Container"></div>');
 	this._dom.attr('id', this._id)
 }
 

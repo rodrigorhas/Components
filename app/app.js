@@ -1,56 +1,7 @@
-function load (url, callback) {
-	var count = 0;
-
-	if(isArray(url)) {
-		count = url.length;
-
-		for ( i in url ) {
-			tryDown(url[i], callback, true);
-		}
-	}
-
-	else if( isString(url) ) {
-		tryDown(url, callback);
-	}
-
-	function tryDown (url, callback, queue) {
-		var type = url.match(/.(\w+)$/ig);
-
-		if ( !type ) return;
-
-		type = type[0];
-
-		var node;
-
-		switch ( type ) {
-			case '.js':
-			node = document.createElement('script');
-			node.src = url;
-			break;
-		}
-
-		node.onload = function () {
-			if( queue ) --count;
-			if(isFunction(callback)) {
-				if( queue && count == 0) {
-					 callback ();
-				}
-
-				else if (!queue) {
-					callback();
-				}
-			}
-		}
-
-		node.onerror = function () {
-			//console.error('cannot find ' + url);
-		}
-
-		document.body.appendChild(node);
-	}
-}
-
 var preload = [
+	'app/style.css',
+
+	'xjs/lib/jquery.js',
 	'xjs/lib/jquery-ui.js',
 	'xjs/lib/Event.js',
 	'xjs/lib/Extend.js',
@@ -84,10 +35,25 @@ var preload = [
 	'xjs/components/Factory.js',
 ];
 
-load( preload, function () {
+require( preload, function () {
 	$(function () {
 
+		$.fn.disableSelection = function() {
+
+	    return this.attr('unselectable', 'on')
+	       .css({'-moz-user-select':'-moz-none',
+	             '-moz-user-select':'none',
+	             '-o-user-select':'none',
+	             '-khtml-user-select':'none',
+	             '-webkit-user-select':'none',
+	             '-ms-user-select':'none',
+	             'user-select':'none'})
+		       .bind('selectstart', false);
+		};
+
 		Main.viewport();
+
+		var wnds = {};
 
 		// Custom form 
 
@@ -165,29 +131,15 @@ load( preload, function () {
 							items: [
 								{id: 'btn1', xtype: 'Button', label: 'Profile'},
 								{id: 'btn2', xtype: 'Button', label: 'toggle toolbar'},
-								{id: 'btn3', xtype: 'Button', label: 'open window'},
-								{id: 'btn4', xtype: 'Button', label: 'new window'}
+								{id: 'btn3', xtype: 'Button', label: 'create panel'},
+								{id: 'btn4', xtype: 'Button', label: 'delete all panels'}
 							]
 						},
 
-						{id: 'postform', xtype: 'easyPost'},
-
-						/*{
-							id: 'commentList',
-							xtype: 'List',
-							title: 'last comments',
-							store: 'kommit',
-						}*/
+						{id: 'postform', xtype: 'easyPost'}
 					]
 				}
-			],
-
-			listeners : function (view) {
-				view.btn1._dom.on('click', function (e){
-					console.log($(this));
-					view.btn1.onclick.trigger('ola');
-				});
-			}
+			]
 		});
 		
 		Main.controller({
@@ -206,17 +158,33 @@ load( preload, function () {
 			    });
 
 			    element.btn3.onclick.listen(function (e, dom) {
-			    	new Window({id: 'newWindow', toolbarButtons: {minimize: true}}).render('#' + view._id);
+			    	WindowManager.createInstance ({
+						name: "panel-" + (WindowManager.maxZindex + 1),
+
+						dimensions : {
+							width: 150,
+							height : 175
+						},
+
+						pos: {
+							x: 270,
+							y: 100
+						},
+
+						resizable: false,
+						borderless: true,
+						shadow: true
+					});
 			    });
 
 			    element.btn4.onclick.listen(function (e, dom) {
-			    	new Window({id: 'secondWindow', toolbarButtons: {maximize: true}}).render('#' + view._id);
+					WindowManager.removeAll();
 			    });
 
 			    element.postform.formButtonClicked.listen(function (response) {
 			    	response = {message: response.comment, picture: null || 'https://s3.amazonaws.com/uifaces/faces/twitter/sillyleo/128.jpg'}
 			    	element.commentList.socket.emit('sendComment', response);
-			    })
+			    });
 			}
 		})
 
@@ -261,4 +229,4 @@ load( preload, function () {
 		window.store = store;
 
 	});
-});
+}); 

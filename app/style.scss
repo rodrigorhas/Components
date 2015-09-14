@@ -1,0 +1,24 @@
+.easy-post {
+	width: 400px;
+	margin: 42px auto 32px !important;
+
+	[contentEditable=true]{
+		padding: 16px;
+		font-weight: 400;
+		font-size: 14px;
+		color: rgba(100,100,100,1);
+		min-height: 80px;
+		outline: none;
+
+	    &:empty:not(:focus):before{
+			content:attr(data-placeholder);
+			color: rgba(130,130,130,1);
+		}
+	}
+
+	&  .btn {
+		padding: 6px 16px;
+		top: 2px;
+		font-size: 110%;
+	}
+}

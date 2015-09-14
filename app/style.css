@@ -1,0 +1,1 @@
+.easy-post{width:400px;margin:42px auto 32px !important}.easy-post [contentEditable=true]{padding:16px;font-weight:400;font-size:14px;color:#646464;min-height:80px;outline:none}.easy-post [contentEditable=true]:empty:not(:focus):before{content:attr(data-placeholder);color:#828282}.easy-post .btn{padding:6px 16px;top:2px;font-size:110%}
