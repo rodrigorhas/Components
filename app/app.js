@@ -206,8 +206,25 @@ require( preload, function () {
 
 			.addPK(['id']);
 
-		/*for (var i = 0; i < 500; i++) {
-			store.insert({name: Hash().slice(3), hash: Hash(2)})
+		/*store.onDelete.listen(function (item) {
+			//console.log(item);
+		});
+
+		store.onInsert.listen(function (item) {
+			//console.log(item);
+		});
+
+		// not finished yet, cos' the update method aren't too
+		store.onUpdate.listen(function (item) {
+			//console.log(item);
+		});
+
+		store.onChange.listen(function (item) {
+			//console.log(item);
+		});*/
+
+		for (var i = 0; i < 500; i++) {
+			store.insert({name: Hash().slice(3), hash: Hash(2)});
 		};
 
 		store.delete(function (row) {
@@ -215,7 +232,7 @@ require( preload, function () {
 				return true;
 		});
 
-		store.update(function (row) {
+		/*store.update(function (row) {
 			if(row.name.indexOf('x') > -1)
 				row.name = ':D';
 		});
