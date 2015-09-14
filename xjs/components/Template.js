@@ -24,6 +24,5 @@ var Template = {
 	}
 }
 
-//Exemplo :D
-var data = Template.do("ola {{this.nome}}, voce tem {{this.idade}} anos!", {nome: 'Vinícius', idade: '26'});
-console.log(data);
+/*var data = Template.do("ola {{this.nome}}, voce tem {{this.idade}} anos!", {nome: 'Vinícius', idade: '26'});
+console.log(data);*/

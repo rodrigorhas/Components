@@ -1,10 +1,9 @@
 function Checkbox(options){	
-	this.options = options;
-	
-	if(isset(this.init)) this.init();
+
+	this._config(options);
+
+	this._dom = $('<input type="checkbox" />');
+	this._dom.attr('id', this.id);
 }
 
 Checkbox.extend(BaseComponent);
-
-Checkbox.prototype.html = '<input type="checkbox" />';
-Checkbox.prototype.type = '';

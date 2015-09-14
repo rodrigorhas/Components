@@ -1,9 +1,8 @@
 function Grid(options){	
-	this.options = options;
-	
-	if(isset(this.init)) this.init();
+
+	this._config(options);
+	this._dom = $('<div class="Grid"></div>');
+	this._dom.attr('id', this._id);
 }
 
 Grid.extend(BaseComponent);
-
-Grid.prototype.html = '<div class="Grid"></div>';

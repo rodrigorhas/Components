@@ -1,23 +1,11 @@
 function Input(options){
 
-	this.id = Hash();
-
-	for (var property in options) {
-		this[property] = options[property];
-	}
-
+	this._config(options);
 	this._dom = $('<input class="input" type="text" />');
 	this._dom.attr('id', this.id);
 
 	if(this.emptyText)
 		this._dom.attr('placeholder', this.emptyText);
-
-	console.log(this);
-
-	// event attachs
-	this.configListeners();
-
-	this.registerAsComponent();
 }
 
 Input.extend(BaseComponent);

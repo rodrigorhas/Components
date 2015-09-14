@@ -86,8 +86,7 @@ View.prototype = {
 
 	factory : function (item) {
 
-		// if this namespace doesn't exists, create !
-		if ( !window['Components'] ) window['Components'] = []
+		if ( !window['Components'] ) window['Components'] = [];
 
 		var fn = new Function(
 		'var item = '+JSON.stringify(item)+

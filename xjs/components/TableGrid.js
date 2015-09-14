@@ -1,4 +1,4 @@
-function TableGrid(options){
+/*function TableGrid(options){
 
 	this.id = Hash();
 
@@ -124,4 +124,4 @@ TableGrid.prototype.prepareComponent = function (dom) {
 	}.bind(this)
 
 	this.loadData(this.afterLoad);
-};
+};*/

@@ -51,6 +51,7 @@ function load (url, callback) {
 }
 
 var preload = [
+	'xjs/lib/jquery-ui.js',
 	'xjs/lib/Event.js',
 	'xjs/lib/Extend.js',
 	'xjs/util/Util.js',
@@ -125,7 +126,7 @@ load( preload, function () {
 			}
 		})
 
-		Main.router({
+		/*Main.router({
 
 			init: {
 				routeName: '/',
@@ -140,7 +141,7 @@ load( preload, function () {
 			],
 
 			otherwise : '/'
-		})
+		})*/
 
 
 		Main.view({
@@ -185,19 +186,19 @@ load( preload, function () {
 
 			listeners : function (view) {
 				view.btn1._dom.click(function (e){
-					view.btn1.onclick.trigger();
+					view.btn1.onclick.trigger(e, view.btn1);
 				})
 
 				view.btn2._dom.click(function (e){
-					view.btn2.onclick.trigger();
+					view.btn2.onclick.trigger(e, view.btn2);
 				});
 
 				view.btn3._dom.click(function (e){
-					view.btn3.onclick.trigger();
+					view.btn3.onclick.trigger(e, view.btn3);
 				});
 
 				view.btn4._dom.click(function (e){
-					view.btn4.onclick.trigger();
+					view.btn4.onclick.trigger(e, view.btn4);
 				});
 			}
 		});
@@ -208,19 +209,19 @@ load( preload, function () {
 			view: 'mainView',
 
 			ready : function (element, view) {
-				element.btn1.onclick.listen(function () {
-			    	Main.router.go('/profile', true);
+				element.btn1.onclick.listen(function (e, dom) {
+			    	//Main.router.go('/profile', true);
 			    });
 
-			    element.btn2.onclick.listen(function () {
+			    element.btn2.onclick.listen(function (e, dom) {
 			    	element.toolbar._dom.toggleClass('min');
 			    });
 
-			    element.btn3.onclick.listen(function () {
+			    element.btn3.onclick.listen(function (e, dom) {
 			    	new Window({id: 'newWindow', toolbarButtons: {minimize: true}}).render('#' + view._id);
 			    });
 
-			    element.btn4.onclick.listen(function () {
+			    element.btn4.onclick.listen(function (e, dom) {
 			    	new Window({id: 'secondWindow', toolbarButtons: {maximize: true}}).render('#' + view._id);
 			    });
 
@@ -230,110 +231,6 @@ load( preload, function () {
 			    })
 			}
 		})
-
-		Main.view({
-			name: 'configView',
-
-			allowScroll : true,
-
-			items: [
-
-				{
-					xtype: 'Container',
-					cls: 'pd-top',
-
-					items: [
-						{
-							id: 'toolbar',
-							title: 'Kommit',
-							xtype: 'Toolbar',
-							size: 'min',
-							items: [
-								{id: 'backButton', xtype: 'Button', label: 'back'}
-							]
-						},
-
-						{xtype: 'PageDivider', label: 'Profile'},
-
-						{
-							xtype: 'Card',
-							id: 'mainCard',
-
-							items: [
-								{
-									xtype: 'Input',
-									emptyText: 'Set username',
-									target: '#mainCard .card-body',
-									id: 'usernameField',
-
-									customize: function () {
-										var mun = localStorage.getItem('mvc-app-username');
-										console.log(mun);
-										if(isset(mun)) {
-											this.setText(mun);
-										}
-									}
-								},
-								{
-									xtype: 'Button',
-									id: 'changeUsername',
-									size: 'min',
-									label: 'save',
-									target: '#mainCard .card-body',
-									raised: true
-								}
-							]
-						}
-
-					]
-				}
-			],
-
-			listeners : function (view) {
-				view.backButton._dom.click(function (e){
-					view.backButton.onclick.trigger();
-				});
-
-				view.changeUsername._dom.click(function (e){
-					view.changeUsername.onclick.trigger();
-				});
-			}
-		});
-
-		Main.controller({
-			name: 'configController',
-			
-			model: 'mainModel',
-
-			view: 'configView',
-
-			ready : function (element, view) {
-				element.backButton.onclick.listen(function () {
-			    	Main.router.go('/', true);
-			    });
-
-			    element.changeUsername.onclick.listen(function () {
-			    	var un = element.usernameField.getText();
-			    	var ns = 'mvc-app-username';
-			    	var lun = localStorage.getItem(ns);
-			    	if(!isset(lun)) {
-			    		localStorage.setItem(ns, un);
-			    	} else {
-			    		Main.User.name = lun;
-			    	}
-
-			    	element.usernameField.clearText();
-			    });
-
-			    element.usernameField.onrender.listen(function () {
-			    	var mun = localStorage.getItem('mvc-app-username');
-					console.log(mun);
-					if(isset(mun)) {
-						this.setText(mun);
-					}
-			    })
-			}
-		});
 
 		var store = StoreManager.add('todo');
 

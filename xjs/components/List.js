@@ -1,52 +1,11 @@
 function List(options){
 
-	this.id = Hash();
-
-	for (var property in options) {
-		this[property] = options[property];
-	}
-
-	//this.store = Main.Stores[this.store];
-
+	this._config(options);
 	this._dom = $('<div class="list"></div>');
 	this._dom.attr('id', this.id);
 
-	if(this.title) {
-		this._dom.prepend('<h3 class="page-divider">'+this.title+'</h3>')
-	}
-
-	if(this.scrollSelf && this.scrollSelf == true){
-		console.debug('make this shit scroll itself');
-	}
-
-	if(this.socket && this.socket.connectTo){
-		Main.SocketManager.connect(this.id, this.socket.connectTo);
-		this.socket = Main.SocketManager.getSocket(this.id);
-
-		this.socket.emit('adduser', Hash())
-
-		this.socket.on('updaterooms', function (data) {
-			this.socket.availableRooms = data;
-		}.bind(this))
-
-		this.socket.on('AllComments', function (data) {
-
-			this.store.setData(data.body);
-
-		}.bind(this))
-
-		this.socket.on('updateCommentList', function (sender, response) {
-			this.store.data.insert(this.store.dataset.rows.length, [response.picture, sender, response.message, new Date().getTime()])
-
-		}.bind(this));
-	}
-	
-	//this.prepareComponent();
-	
-	// event attachs
-	this.configListeners();
-
-	this.registerAsComponent();
+	if(this.title)
+		this._dom.prepend('<h3 class="page-divider">'+this.title+'</h3>');
 }
 
 List.extend(BaseComponent);

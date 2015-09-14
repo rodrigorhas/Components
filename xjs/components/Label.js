@@ -1,9 +1,9 @@
 function Label (options) {
-	this.options = options;
 
-	if(isset(this.init)) this.init();
+	this._config(options);
+	this._dom = $('<span></span>');
+	this._dom.attr('id', this.id);
+
 }
 
 Label.extend(BaseComponent);
-
-Label.prototype.html = '<span></span>';

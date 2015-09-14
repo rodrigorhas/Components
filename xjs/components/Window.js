@@ -1,24 +1,16 @@
 function Window(options){
 
-	this.id = Hash();
 	this.height = 400;
 	this.width = 500;
 
-	for (var property in options) {
-		this[property] = options[property];
-	}
+	this._config(options);
 
 	if(this.id in window.Main.components) {
 		return window.Main.components[this.id];
 	}
 
-	this._dom = $('<div class="window focused"><div class="inside-shadow"><div class="handler"></div><div class="content"></div></div></div>'	);
+	this._dom = $('<div class="window focused"><div class="inside-shadow"><div class="handler"></div><div class="content"></div></div></div>');
 	this._dom.attr('id', this.id);
-
-	// event attachs
-	this.configListeners();
-
-	this.registerAsComponent();
 
 	this.before();
 }
@@ -205,8 +197,7 @@ Window.prototype.toggleFs = function () {
 			top: 'auto',
 			position: 'absolute'
 
-		})
-
+		});
 		
 		dom.animate({
 			width: this.defaults.width,
