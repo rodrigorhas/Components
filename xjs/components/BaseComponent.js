@@ -2,37 +2,52 @@ function BaseComponent () {
 	this.id = Hash();
 
 	this.registerAsComponent ();
-
-	//this._initListeners ();
 }
 
-BaseComponent.prototype.customize = function () {}
+BaseComponent.prototype.init = function () {}
 
-/*BaseComponent.prototype._initListeners = function () {
+BaseComponent.prototype._configListeners = function ( dom ) {
 
-	console.log(this);
+	this.ondblclick = new Event();
+	this.onclick = new Event();
+	this.onmouseover = new Event();
+	this.onmouseleave = new Event();
+	this.onmousedown = new Event();
+	this.onmouseup = new Event();
+	this.ondisable = new Event();
+	this.onenable = new Event();
+	this.onshow = new Event();
+	this.onhide = new Event();
+	this.onchange = new Event();
+	this.onrender = new Event();
+	this.ondestroy = new Event();
+	this.onbefore = new Event();
+	this.onhover = new Event();
+	this.onmousemove = new Event();
 
-	this._dom.on('dblclick', function (e) { this.ondblclick.trigger(e, this._dom) }.bind(this));
-	this._dom.on('click', function (e) { this.onclick.trigger(e, this._dom) }.bind(this));
-	this._dom.on('mouseover', function (e) { this.onmouseover.trigger(e, this._dom) }.bind(this));
-	this._dom.on('mouseleave', function (e) { this.onmouseleave.trigger(e, this._dom) }.bind(this));
-	this._dom.on('mousedown', function (e) { this.onmousedown.trigger(e, this._dom) }.bind(this));
-	this._dom.on('mouseup', function (e) { this.onmouseup.trigger(e, this._dom) }.bind(this));
-	this._dom.on('disable', function (e) { this.ondisable.trigger(e, this._dom) }.bind(this));
-	this._dom.on('able', function (e) { this.onable.trigger(e, this._dom) }.bind(this));
-	this._dom.on('show', function (e) { this.onshow.trigger(e, this._dom) }.bind(this));
-	this._dom.on('hide', function (e) { this.onhide.trigger(e, this._dom) }.bind(this));
-	this._dom.on('change', function (e) { this.onchange.trigger(e, this._dom) }.bind(this));
-	this._dom.on('render', function (e) { this.onrender.trigger(e, this._dom) }.bind(this));
-	this._dom.on('destroy', function (e) { this.ondestroy.trigger(e, this._dom) }.bind(this));
-	this._dom.on('before', function (e) { this.onbefore.trigger(e, this._dom) }.bind(this));
-	this._dom.on('hover', function (e) { this.onhover.trigger(e, this._dom) }.bind(this));
-	this._dom.on('mousemove', function (e) { this.onmousemove.trigger(e, this._dom) }.bind(this));
-}*/
+	dom.on('dblclick', function (e) { this.ondblclick.trigger(e, dom) }.bind(this));
+	dom.on('click', function (e) { this.onclick.trigger(e, dom) }.bind(this));
+	dom.on('mouseover', function (e) { this.onmouseover.trigger(e, dom) }.bind(this));
+	dom.on('mouseleave', function (e) { this.onmouseleave.trigger(e, dom) }.bind(this));
+	dom.on('mousedown', function (e) { this.onmousedown.trigger(e, dom) }.bind(this));
+	dom.on('mouseup', function (e) { this.onmouseup.trigger(e, dom) }.bind(this));
+	dom.on('disable', function (e) { this.ondisable.trigger(e, dom) }.bind(this));
+	dom.on('able', function (e) { this.onable.trigger(e, dom) }.bind(this));
+	dom.on('show', function (e) { this.onshow.trigger(e, dom) }.bind(this));
+	dom.on('hide', function (e) { this.onhide.trigger(e, dom) }.bind(this));
+	dom.on('change', function (e) { this.onchange.trigger(e, dom) }.bind(this));
+	dom.on('render', function (e) { this.onrender.trigger(e, dom) }.bind(this));
+	dom.on('destroy', function (e) { this.ondestroy.trigger(e, dom) }.bind(this));
+	dom.on('before', function (e) { this.onbefore.trigger(e, dom) }.bind(this));
+	dom.on('hover', function (e) { this.onhover.trigger(e, dom) }.bind(this));
+	dom.on('mousemove', function (e) { this.onmousemove.trigger(e, dom) }.bind(this));
+}
 
 BaseComponent.prototype.render = function (target) {
-	
-	this.customize(this);
+
+	this._configListeners (this._dom);
+
+	this.init(this);
 
 	this.target = (target) ? target : this.target;
 
@@ -43,7 +58,7 @@ BaseComponent.prototype.render = function (target) {
 	else {
 		throw new Error('Target not set');
 	}
-	
+
 	return this;
 }
 

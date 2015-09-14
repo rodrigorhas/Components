@@ -8,9 +8,8 @@ Event.prototype = {
     },
 
     trigger: function () {
-        console.log(this.listeners);
         for (var i = 0; i < this.listeners.length; i++) {
-            this.listeners[i].apply(null, arguments)
+            this.listeners[i].apply(null, arguments);
         };
     },
 

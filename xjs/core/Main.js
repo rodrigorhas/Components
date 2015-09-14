@@ -37,12 +37,12 @@
 			if(typeof name != "string") throw new Error('Class name isn\'t a string');
 			if(typeof object != "object") throw new Error('Class config isn\'t a object');
 
-			var dmo = (object.prototype._dom) ? object.prototype._dom : '';
+			var dom = (object.prototype && object.prototype._dom) ? object.prototype._dom : '';
 
 			var fn = new Function(
 			'return function ' + name + '(options){\
 				this._config(options);\
-				this._dom = $(\''+object.prototype._dom+'\');\
+				this._dom = $(\''+ dom +'\');\
 				this._dom.attr(\'id\', this.id);\
 			}');
 

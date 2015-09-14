@@ -103,7 +103,8 @@ load( preload, function () {
 					</div>\
 				</div>',
 
-				customize: function (obj) {
+				init: function (obj) {
+					console.log('write');
 					var dom = $(obj._dom);
 
 					obj.formButtonClicked = new Event();
@@ -124,7 +125,7 @@ load( preload, function () {
 					})
 				}
 			}
-		})
+		});
 
 		/*Main.router({
 
@@ -171,34 +172,20 @@ load( preload, function () {
 
 						{id: 'postform', xtype: 'easyPost'},
 
-						{
+						/*{
 							id: 'commentList',
 							xtype: 'List',
 							title: 'last comments',
 							store: 'kommit',
-							/*socket: {
-								connectTo: 'http://localhost:8081'
-							}*/
-						}
+						}*/
 					]
 				}
 			],
 
 			listeners : function (view) {
-				view.btn1._dom.click(function (e){
-					view.btn1.onclick.trigger(e, view.btn1);
-				})
-
-				view.btn2._dom.click(function (e){
-					view.btn2.onclick.trigger(e, view.btn2);
-				});
-
-				view.btn3._dom.click(function (e){
-					view.btn3.onclick.trigger(e, view.btn3);
-				});
-
-				view.btn4._dom.click(function (e){
-					view.btn4.onclick.trigger(e, view.btn4);
+				view.btn1._dom.on('click', function (e){
+					console.log($(this));
+					view.btn1.onclick.trigger('ola');
 				});
 			}
 		});
@@ -209,8 +196,9 @@ load( preload, function () {
 			view: 'mainView',
 
 			ready : function (element, view) {
-				element.btn1.onclick.listen(function (e, dom) {
-			    	//Main.router.go('/profile', true);
+				console.log(element);
+				element.btn1.onclick.listen(function (m) {
+			    	console.log(m)
 			    });
 
 			    element.btn2.onclick.listen(function (e, dom) {

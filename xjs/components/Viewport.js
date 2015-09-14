@@ -3,13 +3,6 @@ function Viewport (options) {
 	this._config(options);
 	this._dom = $('<div id="viewport" class="view"></div>');
 
-	this.init();
-}
-
-Viewport.extend(BaseComponent);
-
-Viewport.prototype.init = function () {
-		
 	console.debug('Viewport Initialized');
 
 	this._dom.appendTo($('body'));
@@ -18,3 +11,5 @@ Viewport.prototype.init = function () {
 		Main.effects.loadRipple();
 	}
 }
+
+Viewport.extend(BaseComponent);
