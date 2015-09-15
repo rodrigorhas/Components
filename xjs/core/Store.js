@@ -61,7 +61,23 @@
 
 		// events
 
-		this.onupdate = new Event();
+		this.onChange = new Event();
+		this.onInsert = new Event();
+		this.onDelete = new Event();
+		this.onUpdate = new Event();
+	}
+
+	Store.prototype.dispatch = function ( data ) {
+
+		data.time = Date.now();
+
+		this.onChange.trigger(data);
+
+		var type = data.type;
+		delete data.type;
+
+		this['on' + capitalize(type)].trigger(data);
+
 	}
 
 	/*
@@ -106,74 +122,90 @@
 	}
 
 	/*
-		S - C - U - D
+		C - R- U - D
 	*/
 
 	Store.prototype.insert = function ( data ) {
+		var $this = this;
 
-		for (var columnName in this.columns) {
-			var col = this.columns[columnName]; // <Object>
-			var isValid = this.types[col.type]; // <Function>
-
-			if( data[columnName] ) {
-				var val = data[columnName];
-
-				if ( isValid (val) ) {
-
-					if( col.length ) {
-						var v;
-						v = (!isString(val)) ? v = String(val) : v = val;
-
-						if(v.length > col.length) {
-							return console.error(
-								'Max column data length is ' + col.length +
-								', at '+ this.pk[0] +':' + data[this.pk[0]]
-							);
-						}
-					}
-
-					continue;
-				}
-
-				else {
-					console.error(
-						'Wrong type, ' +
-						columnName + ':Column<'+ capitalize(col.type) + '> ' +
-						'=> ' +
-						val        + ':Value<' + capitalize(typeof val) + '>'
-					);
-
-					return this;
-				}
-			}
-
-			else {
-				if ( col.an ) {
-
-					data[columnName] = null;
-					//console.warn ( columnName + '<Column> not found, but can be null' );
-				}
-
-				else if ( col.ai ) {
-					var lastKey = (!this.data.length) ? this.data.length + 1 : lastOf(this.data)[columnName] + 1;
-
-					data[columnName] = lastKey;
-				}
-
-				else {
-					return console.error('missing col -> ' + columnName );
-				}
-
+		if ( isArray(data) ) {
+			for (var i in data) {
+				validateAndInsert(data[i]);
 			}
 		}
 
-		this.data.push ( data );
+		else if (isObject(data, true)) {
+			validateAndInsert(data);
+		}
 
-		this.onupdate.trigger ({
+		function validateAndInsert ( item ) {
+
+			for (var columnName in $this.columns) {
+				var col = $this.columns[columnName]; // <Object>
+				var isValid = $this.types[col.type]; // <Function>
+
+				if( item[columnName] ) {
+					var val = item[columnName];
+
+					if ( isValid (val) ) {
+
+						if( col.length ) {
+							var v;
+							v = (!isString(val)) ? v = String(val) : v = val;
+
+							item[columnName] = v.slice(0, col.length);
+
+							/*if(v.length > col.length) {
+								return console.error(
+									'Max column data length is ' + col.length +
+									', at '+ $this.pk[0] +':' + item[$this.pk[0]]
+								);
+							}*/
+						}
+
+						continue;
+					}
+
+					else {
+						console.error(
+							'Wrong type, ' +
+							columnName + ':Column<'+ capitalize(col.type) + '> ' +
+							'=> ' +
+							val        + ':Value<' + capitalize(typeof val) + '>'
+						);
+
+						return $this;
+					}
+				}
+
+				else {
+					if ( col.an ) {
+
+						item[columnName] = null;
+						//console.warn ( columnName + '<Column> not found, but can be null' );
+					}
+
+					else if ( col.ai ) {
+						var lastKey = (!$this.data.length) ? $this.data.length + 1 : lastOf($this.data)[columnName] + 1;
+
+						item[columnName] = lastKey;
+					}
+
+					else {
+
+						return console.error('missing col -> ' + columnName );
+					}
+				}
+			}
+
+			$this.data.push ( item );
+		}
+
+		this.dispatch({
 			type: 'insert',
 			time: Date.now(),
 			data : data
-		})
+		});
 
 		return this;
 	}
@@ -272,6 +304,8 @@
 
 		if(!fn || !isFunction(fn)) return;
 
+		var deleted = [];
+
 		for (var i = 0; i < this.data.length; i++) {
 			var row = this.data[i];
 			var match = fn(this.data[i]);
@@ -279,9 +313,15 @@
 				if ( isBool(match) || isNumber(match) )
 					match = i;
 
+				deleted.push (row);
 				this.data.splice(i, 1);
 			}
 		};
+
+		this.dispatch({
+			type: 'delete',
+			data: deleted
+		});
 	}
 
 	/*
@@ -295,6 +335,7 @@
 		for (var i = 0; i < this.data.length; i++) {
 			var row = this.data[i];
 			var match = fn(this.data[i]);
+
 			/*if(match) {
 				if ( isBool(match) || isNumber(match) )
 					match = i;
