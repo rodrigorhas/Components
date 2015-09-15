@@ -139,7 +139,13 @@ require( preload, function () {
 						{id: 'postform', xtype: 'easyPost'}
 					]
 				}
-			]
+			],
+
+			listeners: function (view) {
+				/*view.toolbar.getDom().hover(function () {
+					view.toolbar.onhover.trigger('hovering');
+				})*/
+			}
 		});
 		
 		Main.controller({
@@ -148,8 +154,12 @@ require( preload, function () {
 			view: 'mainView',
 
 			ready : function (element, view) {
-				console.log(element);
+
 				element.btn1.onclick.listen(function (m) {
+			    	console.log(m)
+			    });
+
+			    element.toolbar.onhover.listen(function (m) {
 			    	console.log(m)
 			    });
 

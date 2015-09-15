@@ -86,7 +86,7 @@ View.prototype = {
 
 	factory : function (item) {
 
-		if ( !window['Components'] ) window['Components'] = [];
+		if ( !window.Main['components'] ) window.Main['components'] = {};
 
 		var fn = new Function(
 		'var item = '+JSON.stringify(item)+
@@ -95,7 +95,7 @@ View.prototype = {
 
 		var component = fn();
 
-		window.Components.push( component );
+		window.Main.components[component.id] = component;
 
 		return component;
 	},
