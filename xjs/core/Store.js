@@ -9,7 +9,7 @@
 	StoreManager.prototype.add = function (name) {
 		this[name] = new Store(name);
 
-		return this[name]
+		return this[name];
 	}
 
 	StoreManager.prototype.get = function (storeName) {
@@ -72,12 +72,7 @@
 		data.time = Date.now();
 
 		this.onChange.trigger(data);
-
-		var type = data.type;
-		delete data.type;
-
-		this['on' + capitalize(type)].trigger(data);
-
+		this['on' + capitalize(data.type)].trigger(data);
 	}
 
 	/*
@@ -154,13 +149,6 @@
 							v = (!isString(val)) ? v = String(val) : v = val;
 
 							item[columnName] = v.slice(0, col.length);
-
-							/*if(v.length > col.length) {
-								return console.error(
-									'Max column data length is ' + col.length +
-									', at '+ $this.pk[0] +':' + item[$this.pk[0]]
-								);
-							}*/
 						}
 
 						continue;

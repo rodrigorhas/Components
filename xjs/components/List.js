@@ -1,4 +1,4 @@
-function List(options){
+/*function List(options){
 
 	this._config(options);
 	this._dom = $('<div class="list"></div>');
@@ -8,7 +8,7 @@ function List(options){
 		this._dom.prepend('<h3 class="page-divider">'+this.title+'</h3>');
 }
 
-List.extend(BaseComponent);
+List.extend(BaseComponent);*/
 
 /*List.prototype.prepareComponent = function (dom) {
 	var  _this = this;

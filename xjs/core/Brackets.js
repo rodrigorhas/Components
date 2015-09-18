@@ -8,7 +8,7 @@ http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-lin
 var Brackets = {
 	compile: function(tpl, options)
 	{
-		var re = /<%([^%>]+)?%>/g, reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g, code = 'var r=[];\n', cursor = 0, match;
+		var re = /\<%([^%>]+)%>/g, reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g, code = 'var r=[];\n', cursor = 0, match;
 		var add = function(line, js) {
 		    js? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') :
 		        (code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');

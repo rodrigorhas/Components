@@ -1,5 +1,6 @@
 var data = [
-	'app/style.css',
+	'xjs/css/style.css',
+	'app/css/style.css',
 
 	'xjs/lib/jquery.js',
 	'xjs/lib/jquery-ui.js',
@@ -16,6 +17,7 @@ var data = [
 	'xjs/core/View.js',
 	'xjs/core/Controller.js',
 	'xjs/core/WindowFocus.js',
+	'xjs/core/Brackets.js',
 
 	'xjs/components/Viewport.js',
 	'xjs/components/Container.js',
@@ -32,7 +34,11 @@ var data = [
 	'xjs/components/Grid.js',
 	'xjs/components/Checkbox.js',
 	'xjs/components/Card.js',
-	//'xjs/components/Factory.js',
+
+	'xjs/components/test.js',
+
+	// Stores
+	'app/js/stores/Main.js',
 ];
 
 require( data, function () {
@@ -133,7 +139,12 @@ require( data, function () {
 							]
 						},
 
-						{id: 'postform', xtype: 'easyPost'}
+						{id: 'postform', xtype: 'easyPost'},
+						{
+							id: 'test-list',
+							xtype: 'TableGrid',
+							store: 'mainStore'
+						},
 					]
 				}
 			],
@@ -184,80 +195,7 @@ require( data, function () {
 			    	console.log('POST');
 			    });
 			}
-		})
-
-		var store = StoreManager.add('todo');
-
-		store
-			.addColumn({
-				name: 'id',
-				type: 'int',
-				ai: true
-			})
-
-			.addColumn({
-				name: 'name',
-				type: 'string',
-				an : true,
-				length: 6
-			})
-
-			.addPK(['id']);
-
-		store.onUpdate.listen(function (item) {
-			console.log(item);
 		});
-
-		/*
-	
-			// LISTENERS
-
-			store.onDelete.listen(function (item) {
-				console.log(item);
-			});
-
-			store.onInsert.listen(function (item) {
-				console.log(item);
-			});
-
-			store.onUpdate.listen(function (item) {
-				console.log(item);
-			});
-
-			store.onChange.listen(function (item) {
-				console.log(item);
-			});
-
-		*/
-
-		/*
-			// METHODS
-
-			var rand = Math.random() * 1000;
-
-			for (var i = 0; i < rand; i++) {
-				store.insert({name: Hash(), hash: Hash(20)});
-			};
-
-			store.delete(function (row) {
-				if(row.name.indexOf('X') > -1)
-					return true;
-			});
-
-			store.update(function (row) {
-				if(row.name.indexOf('x') > -1)
-					return {name: ':D'};
-			});
-
-			var data = store.select().where(function (row) {
-				if(row.name == ":D") {
-					return true;
-				}
-			});
-
-		*/
-
-		window.store = store;
 
 	});
 }); 
