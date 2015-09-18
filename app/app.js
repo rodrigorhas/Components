@@ -1,4 +1,4 @@
-var preload = [
+var data = [
 	'app/style.css',
 
 	'xjs/lib/jquery.js',
@@ -35,7 +35,7 @@ var preload = [
 	'xjs/components/Factory.js',
 ];
 
-require( preload, function () {
+require( data, function () {
 	$(function () {
 
 		$.fn.disableSelection = function() {
