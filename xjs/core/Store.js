@@ -297,7 +297,8 @@
 		for (var i = 0; i < this.data.length; i++) {
 			var row = this.data[i];
 			var match = fn(this.data[i]);
-			if(match) {
+
+			if( match ) {
 				if ( isBool(match) || isNumber(match) )
 					match = i;
 

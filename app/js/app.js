@@ -91,7 +91,7 @@ require( data, function () {
 						obj.clearText();
 
 						if(text.length)
-							obj.formButtonClicked.trigger({comment: text});
+							obj.formButtonClicked.trigger(text);
 					})
 				}
 			}
@@ -134,7 +134,8 @@ require( data, function () {
 								{id: 'btn1', xtype: 'Button', label: 'Profile'},
 								{id: 'btn2', xtype: 'Button', label: 'toggle toolbar'},
 								{id: 'btn3', xtype: 'Button', label: 'create panel'},
-								{id: 'btn4', xtype: 'Button', label: 'delete all panels'}
+								{id: 'btn4', xtype: 'Button', label: 'delete all panels'},
+								{id: 'clearStore', xtype: 'Button', label: 'Clear Store'}
 							]
 						},
 
@@ -190,23 +191,14 @@ require( data, function () {
 					WindowManager.removeAll();
 			    });
 
+			    element.clearStore.onclick.listen(function (e, dom) {
+					store.delete(function () { return true; })
+			    });
+
 			    element.postform.formButtonClicked.listen(function ( response ) {
-			    	console.log('POST');
+			    	store.insert({name: response});
 			    });
 			}
-		});
-
-		store.insert([
-			{name: 'rodrigo'},
-			{name: 'alan'},
-			{name: 'an'},
-			{name: 'asd'},
-			{name: 'piohwqd1@)!@'}
-		]);
-
-		store.delete(function (row) {
-			if(row.name == 'alan')
-				return true;
 		});
 
 	});
