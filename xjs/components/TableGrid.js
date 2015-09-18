@@ -1,127 +1,127 @@
-/*function TableGrid(options){
+function TableGrid( options ) {
 
-	this.id = Hash();
-
-	for (var property in options) {
-		this[property] = options[property];
-	}
-
-	this.store = Main.Stores[this.store]
-
+	this._config(options);
 	this._dom = $('<table class="table table-hover"></table>');
 	this._dom.attr('id', this.id);
 
-	if(this.scrollSelf && this.scrollSelf == true){
+	if(this.title)
+		this._dom.prepend('<h3 class="page-divider">'+this.title+'</h3>');
+
+	if( this.store ) {
+
+		var store = StoreManager.get(this.store);
+
+		if( store ) {
+
+			this.store = store;
+		}
+
+		else {
+
+			throw new Error('Store not found -> '  + this.store);
+		}
 	}
-
-	
-	this.prepareComponent();
-	
-	// event attachs
-	this.configListeners();
-
-	this.registerAsComponent();
 }
 
 TableGrid.extend(BaseComponent);
 
-TableGrid.prototype.prepareComponent = function (dom) {
-	var  _this = this;
+TableGrid.prototype.init = function () {
+	var $this = this,
+		store = this.store,
+		c = store.getColumns();
 
+	if ( store ) {
+		var template = ['<thead>'];
 
-	this.loadData = function (callback) {
+		for (var k in c) {
+			var column = c[k];
+			template.push('<th>'+ k +'</th>')
+		}
 
-		this.store.ready.listen(function () {
-			this.data = this.store.getData();
-
-			if(callback) callback();
-		}.bind(this))
+		template.push('</thead>');
+		this.getDom().prepend(template.join(''));
 	}
 
-	// prevent double push in the store bind array
-	//if(this.store.binds[this.store.binds.length-1] !=  this.id) this.store.binds[this.store.binds.length] = this.id;
+	store.onChange.listen(function ( item ) {
+		$this.updateTable( item );
+	});
+}
 
-	this.afterLoad = function () {
+TableGrid.prototype.updateTable = function ( item ) {
+	var $this = this;
 
-		this.reloadListeners = function (table) {
-			table.find('th')
-	        .wrapInner('<span data-sort="true"/>')
-	        .each(function(){
-	            
-	            var th = $(this),
-	                thIndex = th.index(),
-	                inverse = false;
-	            
-	            th.click(function(){
-	                
-	                table.find('td').filter(function(){
-	                    
-	                    return $(this).index() === thIndex;
-	                    
-	                }).sortElements(function(a, b){
-	                	aa = parseInt(a);
-	                	bb = parseInt(b);
+	var data = {
+		columns: $this.store.getColumns()
+	}
 
-	                	if (typeof aa != NaN) a = aa;
-	                	if (typeof bb != NaN) b == bb;
-	                    
-	                    return $.text([a]) > $.text([b]) ?
-	                        inverse ? -1 : 1
-	                        : inverse ? 1 : -1;
-	                    
-	                }, function(){
-	                    
-	                    // parentNode is the element we want to move
-	                    return this.parentNode; 
-	                    
-	                });
-	                
-	                inverse = !inverse;
-	                    
-	            });
-	                
-	        });
+	if( isArray(item.data) ) {
 
-	        this.store.hasUpdate.listen(function () {
-				_this.compile(true);
-				console.log('compile by update event');
-			})
+		item.data.forEach(function ( row , index ) {
+			changeStructure (row, item.type);
+		});
+	}
 
+	else {
+
+		changeStructure( item );
+	}
+
+	function changeStructure ( item, type ) {
+		if(!type) {
+			data.row = item.data;
+			type = item.type;
 		}
-		
-		this.compile = function (force) {
-			this.loadData();
-			var template = '\
-				<thead>\
-					<% for (var item in this.dataset.fields) { %>\
-						<th><% this.dataset.fields[item] %></th>\
+
+		else {
+
+			data.row = item;
+		}
+
+		var dom = $this.getDom(),
+			template,
+			pk = $this.store.getPK(),
+			md5pk = MD5(String(data.row[pk]));
+
+		switch (type) {
+
+			case 'delete':
+				var item = dom.find('[id="'+ md5pk + '"]');
+
+				if( item ) {
+					item.remove();
+				}
+			break;
+
+			case 'insert':
+				template = 
+				'<tr id="'+ md5pk +'">\
+					<% for (var key in this.data.columns) { %>\
+						<td><% this.data.row[key] %></td>\
 					<% } %>\
-				</thead>\
-				<tbody>\
-					<% for (var i = 0; i < this.dataset.lines.length; i++) { %>\
-						<tr>\
-							<% for (var u = 0; u < this.dataset.fields.length; u++) { %>\
-								<td><% this.dataset.lines[i][u] %></td>\
-							<% } %>\
-						</tr>\
-					<%}%>\
-				</tbody>\
-			</table>';
+				</tr>';
 
-			tableContent = $(Brackets.compile(template, { dataset: this.data }));
-			this._dom = this._dom.append(tableContent);
-			this._dom.attr('id', this.id);
+				var row = $(Brackets.compile(template, { data: data }));
+				dom.append(row);
+			break;
 
-			if(force) {
-				$('#' + this.id).replaceWith(this._dom);
-			}
-
-			this.reloadListeners(this._dom);
+			case 'rebuild':
+				template = '\
+					<thead>\
+						<% for (var item in this.data.fields) { %>\
+							<th><% this.data.fields[item] %></th>\
+						<% } %>\
+					</thead>\
+					<tbody>\
+						<% for (var i = 0; i < this.data.lines.length; i++) { %>\
+							<tr>\
+								<% for (var u = 0; u < this.data.fields.length; u++) { %>\
+									<td><% this.data.lines[i][u] %></td>\
+								<% } %>\
+							</tr>\
+						<%}%>\
+					</tbody>\
+				</table>';
+			break;
 		}
-
-		this.compile();
-
-	}.bind(this)
-
-	this.loadData(this.afterLoad);
-};*/
+	}
+}

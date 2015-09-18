@@ -16,7 +16,7 @@
 				length: 6
 			})
 
-			.addPK(['id']);
+			.setPK('id');
 
 		/*
 			// LISTENERS

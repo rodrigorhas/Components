@@ -6,6 +6,8 @@ var data = [
 	'xjs/lib/jquery-ui.js',
 	'xjs/lib/Event.js',
 	'xjs/lib/Extend.js',
+	'xjs/lib/MD5.js',
+
 	'xjs/util/Util.js',
 
 	'xjs/components/BaseComponent.js',
@@ -35,8 +37,6 @@ var data = [
 	'xjs/components/Checkbox.js',
 	'xjs/components/Card.js',
 
-	'xjs/components/test.js',
-
 	// Stores
 	'app/js/stores/Main.js',
 ];
@@ -60,7 +60,6 @@ require( data, function () {
 		Main.viewport();
 
 		// Custom form 
-
 		Main.create('easyPost', {
 			extend: BaseComponent,
 
@@ -195,6 +194,19 @@ require( data, function () {
 			    	console.log('POST');
 			    });
 			}
+		});
+
+		store.insert([
+			{name: 'rodrigo'},
+			{name: 'alan'},
+			{name: 'an'},
+			{name: 'asd'},
+			{name: 'piohwqd1@)!@'}
+		]);
+
+		store.delete(function (row) {
+			if(row.name == 'alan')
+				return true;
 		});
 
 	});

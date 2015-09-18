@@ -57,10 +57,9 @@
 			}
 		}
 
-		this.pk = [];
+		this.pk = null;
 
 		// events
-
 		this.onChange = new Event();
 		this.onInsert = new Event();
 		this.onDelete = new Event();
@@ -107,13 +106,14 @@
 		return this;
 	}
 
-	Store.prototype.addPK = function ( arr ) {
-		if ( !isArray(arr) ) {
-			console.warn ('PK must be an array');
-			return;
-		}
+	Store.prototype.setPK = function ( pk ) {
 
-		this.pk = arr;
+		this.pk = pk;
+	}
+
+	Store.prototype.getPK = function ( pk ) {
+
+		return this.pk;
 	}
 
 	/*
