@@ -157,6 +157,8 @@
 			})
 		}
 
+		this._dom.disableSelection ();
+
 		// attach to body
 		$('body').prepend(this._dom);
 	}

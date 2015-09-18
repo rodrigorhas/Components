@@ -32,7 +32,7 @@ var data = [
 	'xjs/components/Grid.js',
 	'xjs/components/Checkbox.js',
 	'xjs/components/Card.js',
-	'xjs/components/Factory.js',
+	//'xjs/components/Factory.js',
 ];
 
 require( data, function () {
@@ -144,7 +144,7 @@ require( data, function () {
 				});
 			}*/
 		});
-		
+
 		Main.controller({
 
 			name: 'mainController',
