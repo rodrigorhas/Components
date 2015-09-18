@@ -334,14 +334,28 @@
 
 		for (var i = 0; i < this.data.length; i++) {
 			var row = this.data[i];
-			var match = fn(this.data[i]);
+			var changes = fn(this.data[i]);
+			var oldValues = {};
 
-			/*if(match) {
-				if ( isBool(match) || isNumber(match) )
-					match = i;
+			if ( isObject(changes, true) ) {
 
-				this.data.splice(i, 1);
-			}*/
+				for (var ck in changes) {
+					var cv = changes[ck];
+
+					if ( cv != row[ck] ) {
+						oldValues[ck] = row[ck];
+						row[ck] = cv;
+					}
+				}
+
+				this.dispatch({
+					type: 'update',
+					data: {
+						oldVal: oldValues,
+						newVal: changes
+					}
+				});
+			}
 		};
 	}
 

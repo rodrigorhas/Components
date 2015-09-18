@@ -40,20 +40,18 @@ require( data, function () {
 
 		$.fn.disableSelection = function() {
 
-	    return this.attr('unselectable', 'on')
-	       .css({'-moz-user-select':'-moz-none',
-	             '-moz-user-select':'none',
-	             '-o-user-select':'none',
-	             '-khtml-user-select':'none',
-	             '-webkit-user-select':'none',
-	             '-ms-user-select':'none',
-	             'user-select':'none'})
-		       .bind('selectstart', false);
+		    return this.attr('unselectable', 'on')
+		       .css({'-moz-user-select':'-moz-none',
+		             '-moz-user-select':'none',
+		             '-o-user-select':'none',
+		             '-khtml-user-select':'none',
+		             '-webkit-user-select':'none',
+		             '-ms-user-select':'none',
+		             'user-select':'none'})
+			       .bind('selectstart', false);
 		};
 
 		Main.viewport();
-
-		var wnds = {};
 
 		// Custom form 
 
@@ -70,7 +68,6 @@ require( data, function () {
 				</div>',
 
 				init: function (obj) {
-					console.log('write');
 					var dom = $(obj._dom);
 
 					obj.formButtonClicked = new Event();
@@ -84,8 +81,10 @@ require( data, function () {
 					}
 
 					dom.find('button').on('click', function () {
+
 						var text = obj.getText();
 						obj.clearText();
+
 						if(text.length)
 							obj.formButtonClicked.trigger({comment: text});
 					})
@@ -110,14 +109,12 @@ require( data, function () {
 			otherwise : '/'
 		})*/
 
-
 		Main.view({
 			name: 'mainView',
 
 			allowScroll : true,
 
 			items: [
-
 				{
 					xtype: 'Container',
 					cls: 'pd-top',
@@ -141,27 +138,19 @@ require( data, function () {
 				}
 			],
 
-			listeners: function (view) {
-				/*view.toolbar.getDom().hover(function () {
+			/*listeners: function (view) {
+				view.toolbar.getDom().hover(function () {
 					view.toolbar.onhover.trigger('hovering');
-				})*/
-			}
+				});
+			}*/
 		});
 		
 		Main.controller({
-			name: 'mainController',
 
+			name: 'mainController',
 			view: 'mainView',
 
 			ready : function (element, view) {
-
-				element.btn1.onclick.listen(function (m) {
-			    	console.log(m)
-			    });
-
-			    element.toolbar.onhover.listen(function (m) {
-			    	console.log(m)
-			    });
 
 			    element.btn2.onclick.listen(function (e, dom) {
 			    	element.toolbar._dom.toggleClass('min');
@@ -191,9 +180,8 @@ require( data, function () {
 					WindowManager.removeAll();
 			    });
 
-			    element.postform.formButtonClicked.listen(function (response) {
-			    	response = {message: response.comment, picture: null || 'https://s3.amazonaws.com/uifaces/faces/twitter/sillyleo/128.jpg'}
-			    	element.commentList.socket.emit('sendComment', response);
+			    element.postform.formButtonClicked.listen(function ( response ) {
+			    	console.log('POST');
 			    });
 			}
 		})
@@ -216,42 +204,58 @@ require( data, function () {
 
 			.addPK(['id']);
 
-		/*store.onDelete.listen(function (item) {
-			//console.log(item);
-		});
-
-		store.onInsert.listen(function (item) {
-			//console.log(item);
-		});
-
-		// not finished yet, cos' the update method aren't too
 		store.onUpdate.listen(function (item) {
-			//console.log(item);
+			console.log(item);
 		});
 
-		store.onChange.listen(function (item) {
-			//console.log(item);
-		});*/
+		/*
+	
+			// LISTENERS
 
-		for (var i = 0; i < 500; i++) {
-			store.insert({name: Hash().slice(3), hash: Hash(2)});
-		};
+			store.onDelete.listen(function (item) {
+				console.log(item);
+			});
 
-		store.delete(function (row) {
-			if(row.name.indexOf('X') > -1)
-				return true;
-		});
+			store.onInsert.listen(function (item) {
+				console.log(item);
+			});
 
-		/*store.update(function (row) {
-			if(row.name.indexOf('x') > -1)
-				row.name = ':D';
-		});
+			store.onUpdate.listen(function (item) {
+				console.log(item);
+			});
 
-		var data = store.select().where(function (row) {
-			if(row.name == ":D") {
-				return true;
-			}
-		});*/
+			store.onChange.listen(function (item) {
+				console.log(item);
+			});
+
+		*/
+
+		/*
+			// METHODS
+
+			var rand = Math.random() * 1000;
+
+			for (var i = 0; i < rand; i++) {
+				store.insert({name: Hash(), hash: Hash(20)});
+			};
+
+			store.delete(function (row) {
+				if(row.name.indexOf('X') > -1)
+					return true;
+			});
+
+			store.update(function (row) {
+				if(row.name.indexOf('x') > -1)
+					return {name: ':D'};
+			});
+
+			var data = store.select().where(function (row) {
+				if(row.name == ":D") {
+					return true;
+				}
+			});
+
+		*/
 
 		window.store = store;
 
