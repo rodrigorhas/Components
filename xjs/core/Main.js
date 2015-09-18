@@ -87,7 +87,7 @@
 		},
 
 		query : function (componentId) {
-			if (componentId in window.Main.components) {
+			if (window.Main.components[componentId]) {
 				return window.Main.components[componentId];
 			}
 			// else

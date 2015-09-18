@@ -25,22 +25,27 @@ BaseComponent.prototype._configListeners = function ( dom ) {
 	this.onhover = new Event();
 	this.onmousemove = new Event();
 
-	dom.on('dblclick', function (e) { this.ondblclick.trigger(e, dom) }.bind(this));
-	dom.on('click', function (e) { this.onclick.trigger(e, dom) }.bind(this));
-	dom.on('mouseover', function (e) { this.onmouseover.trigger(e, dom) }.bind(this));
-	dom.on('mouseleave', function (e) { this.onmouseleave.trigger(e, dom) }.bind(this));
-	dom.on('mousedown', function (e) { this.onmousedown.trigger(e, dom) }.bind(this));
-	dom.on('mouseup', function (e) { this.onmouseup.trigger(e, dom) }.bind(this));
-	dom.on('disable', function (e) { this.ondisable.trigger(e, dom) }.bind(this));
-	dom.on('able', function (e) { this.onable.trigger(e, dom) }.bind(this));
-	dom.on('show', function (e) { this.onshow.trigger(e, dom) }.bind(this));
-	dom.on('hide', function (e) { this.onhide.trigger(e, dom) }.bind(this));
-	dom.on('change', function (e) { this.onchange.trigger(e, dom) }.bind(this));
-	dom.on('render', function (e) { this.onrender.trigger(e, dom) }.bind(this));
-	dom.on('destroy', function (e) { this.ondestroy.trigger(e, dom) }.bind(this));
-	dom.on('before', function (e) { this.onbefore.trigger(e, dom) }.bind(this));
-	dom.on('hover', function (e) { this.onhover.trigger(e, dom) }.bind(this));
-	dom.on('mousemove', function (e) { this.onmousemove.trigger(e, dom) }.bind(this));
+	dom.dblclick( function (e) { this.ondblclick.trigger(e, dom) }.bind(this));
+	dom.click( function (e) { this.onclick.trigger(e, dom) }.bind(this));
+	dom.mouseover( function (e) { this.onmouseover.trigger(e, dom) }.bind(this));
+	dom.mouseleave( function (e) { this.onmouseleave.trigger(e, dom) }.bind(this));
+	dom.mousedown( function (e) { this.onmousedown.trigger(e, dom) }.bind(this));
+	dom.mouseup( function (e) { this.onmouseup.trigger(e, dom) }.bind(this));
+	dom.change( function (e) { this.onchange.trigger(e, dom) }.bind(this));
+	dom.hover( function (e) { this.onhover.trigger(e, dom) }.bind(this));
+	dom.mousemove( function (e) { this.onmousemove.trigger(e, dom) }.bind(this));
+
+	//dom.disable( function (e) { this.ondisable.trigger(e, dom) }.bind(this));
+	//dom.enable( function (e) { this.onable.trigger(e, dom) }.bind(this));
+	//dom.show( function (e) { this.onshow.trigger(e, dom) }.bind(this));
+	//dom.hide( function (e) { this.onhide.trigger(e, dom) }.bind(this));
+	//dom.render( function (e) { this.onrender.trigger(e, dom) }.bind(this));
+	//dom.destroy( function (e) { this.ondestroy.trigger(e, dom) }.bind(this));
+	//dom.before( function (e) { this.onbefore.trigger(e, dom) }.bind(this));
+}
+
+BaseComponent.prototype.getDom = function () {
+	return this._dom;
 }
 
 BaseComponent.prototype.render = function (target) {
@@ -88,9 +93,9 @@ BaseComponent.prototype.down = function (target) {
 
 BaseComponent.prototype.registerAsComponent = function () {
 	if(!window.Main) window.Main = {};
-	if(!window.Main.components) window.Main.components = {};
+	if(!window.Main.Components) window.Main.Components = {};
 
-	window.Main.components[this.id] = this;
+	window.Main.Components[this.id] = this;
 }
 
 BaseComponent.prototype._config = function ( options ) {
