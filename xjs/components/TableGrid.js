@@ -21,11 +21,17 @@ function TableGrid( options ) {
 			throw new Error('Store not found -> '  + this.store);
 		}
 	}
+
+	else {
+
+		throw new Error('Store not found, table must contain at least one store as default');
+	}
 }
 
 TableGrid.extend(BaseComponent);
 
 TableGrid.prototype.init = function () {
+
 	var $this = this,
 		store = this.store;
 

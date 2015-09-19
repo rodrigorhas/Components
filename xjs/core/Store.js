@@ -6,8 +6,10 @@
 
 	function StoreManager () {}
 
-	StoreManager.prototype.add = function (name) {
-		this[name] = new Store(name);
+	StoreManager.prototype.add = function (name, config) {
+
+		if(!config) config = false;
+		this[name] = new Store(name, config);
 
 		return this[name];
 	}
@@ -20,29 +22,40 @@
 		Store class
 	*/
 
-	function Store (name) {
+	function Store (name, config) {
 		var $this = this;
 
 		this.name = name;
 
 		this.columns = {};
-		this.data = [];
+		this.data = {};
+
+		if( config ) {
+			if ( config.proxy ) {
+				this.configProxy(config.proxy);
+			}
+		}
 
 		// store basic info Object:Functions
 		this.info = {
 
 			initAt: Date.now(),
+
 			count : {
+
 				columns: function () {
+
 					return Object.keys($this.columns).length;
 				},
 
 				rows: function () {
-					return $this.data.length;
+
+					return Object.keys($this.data).length;
 				}
 			},
 
 			size: function () {
+
 				return this.count.columns() * this.count.rows ()
 			}
 		}
@@ -66,6 +79,20 @@
 		this.onUpdate = new Event();
 	}
 
+	Store.prototype.fn = {
+		tryParseJSON: function ( jsonString ) {
+		    try {
+		        var o = JSON.parse(jsonString);
+		        if (o && typeof o === "object" && o !== null) {
+		            return o;
+		        }
+		    }
+		    catch (e) { }
+
+		    return false;
+		}
+	};
+
 	Store.prototype.dispatch = function ( data ) {
 
 		data.time = Date.now();
@@ -75,18 +102,80 @@
 	}
 
 	/*
+		Proxy
+	*/
+
+	Store.prototype.load = function ( callback ) {
+
+		if(!callback) callback = function () {};
+
+		var $this = this,
+			type = this.proxy.type;
+
+		// load with ajax
+		var promise = new Promise(function (resolve, reject) {
+			var request = new XMLHttpRequest();
+
+			request.onreadystatechange = function () {
+			    if (request.readyState == 4 && request.status == 200) {
+			    	if( type == 'json') {
+			        	var json = $this.fn.tryParseJSON(request.responseText);
+			        	console.log(json);
+
+			        	resolve(json);
+			    	}
+			    }
+
+			    else if (!request.status == 200) {
+				    reject(request.readyState, request.status);
+			    }
+			}
+
+			request.open("GET", $this.proxy.select, true);
+			request.send();
+		});
+
+		promise.then(function () {
+			var r = callback.apply(window, arguments);
+
+			if( r ) data = r;
+
+			$this.insert.apply($this, arguments);
+		});
+	}
+
+	Store.prototype.configProxy = function ( proxy ) {
+
+		this.proxy = (this.proxy) ? this.proxy : {};
+
+		for (var property in proxy) {
+			var val = proxy[property];
+			this.proxy[property] = val;
+		}
+
+		var p = this.proxy;
+
+		if(p.select && p.autoload) {
+			this.load();
+		}
+	}
+
+	/*
 		Basics get
 	*/
 
 	Store.prototype.getName = function () {
+
 		return (this.name) ? this.name : null;
 	}
 
 	Store.prototype.getData = function () {
-		return (this.data) ? this.data : [];
+
+		return this.select().where(function () {return true});
 	}
 
 	Store.prototype.getColumns = function () {
+
 		return (this.columns) ? this.columns : {};
 	}
 
@@ -121,7 +210,8 @@
 	*/
 
 	Store.prototype.insert = function ( data ) {
-		var $this = this;
+		var $this = this,
+			pk = this.getPK();
 
 		if ( isArray(data) ) {
 			for (var i in data) {
@@ -130,12 +220,14 @@
 		}
 
 		else if (isObject(data, true)) {
+
 			validateAndInsert(data);
 		}
 
 		function validateAndInsert ( item ) {
 
 			for (var columnName in $this.columns) {
+
 				var col = $this.columns[columnName]; // <Object>
 				var isValid = $this.types[col.type]; // <Function>
 
@@ -170,23 +262,27 @@
 					if ( col.an ) {
 
 						item[columnName] = null;
-						//console.warn ( columnName + '<Column> not found, but can be null' );
 					}
 
 					else if ( col.ai ) {
-						var lastKey = (!$this.data.length) ? $this.data.length + 1 : lastOf($this.data)[columnName] + 1;
+
+						var dataKeys = dataKeys = Object.keys($this.data);
+						var dataLen = dataKeys.length;
+						var dataLast = $this.data[dataKeys[dataLen - 1]];
+
+						var lastKey = (!dataLen) ? 1 : dataLast[columnName] + 1;
 
 						item[columnName] = lastKey;
 					}
 
 					else {
 
-						return console.error('missing col -> ' + columnName );
+						return console.error('Missing col -> ' + columnName );
 					}
 				}
 			}
 
-			$this.data.push ( item );
+			$this.data[item[pk]] = item;
 		}
 
 		this.dispatch({
@@ -250,7 +346,12 @@
 	function Select ( keys, data ) {
 		this.keys = keys;
 
-		this.data = data.map(function ( row ) {
+		this.data = {}
+		this.rawData = data;
+
+		for (var k in data) {
+			var row = data[k];
+
 			var r = {};
 			for (var prop in row) {
 				if (this.keys.indexOf(prop) > - 1) {
@@ -258,10 +359,8 @@
 				}
 			}
 
-			return r;
-		}.bind(this));
-
-		this.rawData = data;
+			this.data[k] = r;
+		}
 	}
 
 	Select.prototype.where = function (fn) {
@@ -270,8 +369,20 @@
 
 		var arr = [];
 		var $this = this;
+		var skip = this.skip;
 
-		this.data.filter(function (row, index) {
+		for (var index in this.data) {
+			
+			if( skip ) {
+				--skip;
+				continue;
+			}
+
+			if ( arr.length == limit )
+				break;
+
+			var row = this.data[index];
+
 			var match = fn($this.rawData[index]);
 			if ( match ) {
 				if ( isBool(match) || isNumber(match) )
@@ -279,9 +390,21 @@
 
 				arr.push(match);
 			}
-		});
+		}
 
 		return arr;
+	}
+
+	Select.prototype.limit = function ( num ) {
+
+		this.limit = num;
+		return this;
+	}
+
+	Select.prototype.skip = function ( num ) {
+
+		this.skip = num;
+		return this;
 	}
 
 	/*
@@ -294,8 +417,9 @@
 
 		var deleted = [];
 
-		for (var i = 0; i < this.data.length; i++) {
+		for (var i in this.data) {
 			var row = this.data[i];
+
 			var match = fn(this.data[i]);
 
 			if( match ) {
@@ -303,9 +427,9 @@
 					match = i;
 
 				deleted.push (row);
-				this.data.splice(i, 1);
+				delete this.data[i]
 			}
-		};
+		}
 
 		this.dispatch({
 			type: 'delete',
@@ -321,7 +445,8 @@
 
 		if(!fn || !isFunction(fn)) return;
 
-		for (var i = 0; i < this.data.length; i++) {
+		for (var i in this.data) {
+
 			var row = this.data[i];
 			var changes = fn(this.data[i]);
 			var oldValues = {};

@@ -142,7 +142,7 @@ require( data, function () {
 						{
 							id: 'mainGrid',
 							xtype: 'TableGrid',
-							//store: 'mainStore'
+							store: 'mainStore'
 						},
 					]
 				}

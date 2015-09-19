@@ -1,6 +1,13 @@
 (function () {
 
-	var store = StoreManager.add('mainStore');
+	var store = StoreManager.add('mainStore', {
+		proxy: {
+			type: "json",
+			autoload: true,
+
+			select: 'app/js/stores/data.json'
+		}
+	});
 
 		store
 			.addColumn({
@@ -9,14 +16,15 @@
 				ai: true
 			})
 
-			.addColumn({
-				name: 'name',
-				type: 'string',
-				an : true,
-				length: 6
-			})
+			.addColumn('name')
+			.addColumn("gender")
+			.addColumn("company")
+			.addColumn("email")
+			.addColumn("phone")
 
 			.setPK('id');
+
+		store.proxy = {}
 
 		/*
 			// LISTENERS
