@@ -316,11 +316,13 @@
 	*/
 
 	function Column ( config ) {
+
 		this.an = false;
 		this.zf = false;
 		this.type = "string";
 
 		if ( isString(config) ) {
+
 			this.name = config;
 		}
 
@@ -335,8 +337,21 @@
 			}
 		}
 
-
 		return this;
+	}
+
+	Column.prototype.eq = function (val) {
+
+		var o = {
+			exec: function () {
+				return (this.tv == this.gv) ? true : false;
+			}
+		};
+
+		o.tv = val;
+		o.key = this.name;
+
+		return o;
 	}
 
 	/*
@@ -350,6 +365,7 @@
 		this.rawData = data;
 
 		for (var k in data) {
+
 			var row = data[k];
 
 			var r = {};
@@ -363,13 +379,14 @@
 		}
 	}
 
-	Select.prototype.where = function (fn) {
+	/*Select.prototype.where = function (fn) {
 
 		if(!fn || !isFunction(fn)) return;
 
 		var arr = [];
 		var $this = this;
 		var skip = this.skip;
+		var limit = this.limit;
 
 		for (var index in this.data) {
 			
@@ -384,6 +401,38 @@
 			var row = this.data[index];
 
 			var match = fn($this.rawData[index]);
+			if ( match ) {
+				if ( isBool(match) || isNumber(match) )
+					match = row;
+
+				arr.push(match);
+			}
+		}
+
+		return arr;
+	}*/
+
+	Select.prototype.where = function (test) {
+
+		var arr = [];
+		var $this = this;
+		var skip = this.skip;
+		var limit = this.limit;
+
+		for (var index in this.data) {
+			
+			if( skip ) {
+				--skip;
+				continue;
+			}
+
+			if ( arr.length == limit )
+				break;
+
+			var row = this.data[index];
+			test.gv = $this.rawData[index][test.key];
+			var match = test.exec();
+
 			if ( match ) {
 				if ( isBool(match) || isNumber(match) )
 					match = row;
