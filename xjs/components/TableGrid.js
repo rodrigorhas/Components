@@ -27,11 +27,12 @@ TableGrid.extend(BaseComponent);
 
 TableGrid.prototype.init = function () {
 	var $this = this,
-		store = this.store,
-		c = store.getColumns();
+		store = this.store;
 
 	if ( store ) {
-		var template = ['<thead>'];
+
+		var template = ['<thead>'],
+			c = store.getColumns();
 
 		for (var k in c) {
 			var column = c[k];
@@ -40,11 +41,12 @@ TableGrid.prototype.init = function () {
 
 		template.push('</thead>');
 		this.getDom().prepend(template.join(''));
+
+		store.onChange.listen(function ( item ) {
+			$this.updateTable( item );
+		});
 	}
 
-	store.onChange.listen(function ( item ) {
-		$this.updateTable( item );
-	});
 }
 
 TableGrid.prototype.updateTable = function ( item ) {
@@ -105,6 +107,15 @@ TableGrid.prototype.updateTable = function ( item ) {
 			break;
 
 			case 'rebuild':
+				dom.find('tbody').children().remove();
+
+				template = '\
+				<tr id="'+ md5pk +'">\
+					<% for (var key in this.data.columns) { %>\
+						<td><% this.data.row[key] %></td>\
+					<% } %>\
+				</tr>'
+
 				template = '\
 					<thead>\
 						<% for (var item in this.data.fields) { %>\

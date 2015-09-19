@@ -131,7 +131,6 @@ require( data, function () {
 							xtype: 'Toolbar',
 							size: 'min',
 							items: [
-								{id: 'btn1', xtype: 'Button', label: 'Profile'},
 								{id: 'btn2', xtype: 'Button', label: 'toggle toolbar'},
 								{id: 'btn3', xtype: 'Button', label: 'create panel'},
 								{id: 'btn4', xtype: 'Button', label: 'delete all panels'},
@@ -141,19 +140,13 @@ require( data, function () {
 
 						{id: 'postform', xtype: 'easyPost'},
 						{
-							id: 'test-list',
+							id: 'mainGrid',
 							xtype: 'TableGrid',
-							store: 'mainStore'
+							//store: 'mainStore'
 						},
 					]
 				}
-			],
-
-			/*listeners: function (view) {
-				view.toolbar.getDom().hover(function () {
-					view.toolbar.onhover.trigger('hovering');
-				});
-			}*/
+			]
 		});
 
 		Main.controller({
