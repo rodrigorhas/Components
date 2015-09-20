@@ -138,7 +138,8 @@ require( data, function () {
 							]
 						},
 
-						{id: 'postform', xtype: 'easyPost'},
+						//{id: 'postform', xtype: 'easyPost'},
+
 						{
 							id: 'mainGrid',
 							xtype: 'TableGrid',
@@ -188,9 +189,9 @@ require( data, function () {
 					store.delete(function () { return true; })
 			    });
 
-			    element.postform.formButtonClicked.listen(function ( response ) {
+			    /*element.postform.formButtonClicked.listen(function ( response ) {
 			    	store.insert({name: response});
-			    });
+			    });*/
 			}
 		});
 

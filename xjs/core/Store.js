@@ -23,6 +23,7 @@
 	*/
 
 	function Store (name, config) {
+
 		var $this = this;
 
 		this.name = name;
@@ -63,7 +64,7 @@
 		this.types = {
 			'string' : isString,
 			'number': isNumber,
-			'int': function ( t ) {
+			'integer': function ( t ) {
 				if(isNumber(t) && String(t).indexOf('.') == -1)
 					return true;
 				return false;
@@ -138,7 +139,7 @@
 		promise.then(function () {
 			var r = callback.apply(window, arguments);
 
-			if( r ) data = r;
+			if( r ) arguments[0] = r;
 
 			$this.insert.apply($this, arguments);
 		});
@@ -359,6 +360,7 @@
 	*/
 
 	function Select ( keys, data ) {
+
 		this.keys = keys;
 
 		this.data = {}
