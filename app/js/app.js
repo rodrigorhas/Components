@@ -4,6 +4,7 @@ var data = [
 
 	'xjs/lib/jquery.js',
 	'xjs/lib/jquery-ui.js',
+	'xjs/lib/q.js',
 	'xjs/lib/Event.js',
 	'xjs/lib/Extend.js',
 	'xjs/lib/MD5.js',

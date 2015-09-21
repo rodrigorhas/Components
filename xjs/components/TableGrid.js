@@ -53,9 +53,17 @@ TableGrid.prototype.init = function () {
 		});
 
 		store.onLoad.listen(function ( data ) {
-			//console.info(data);
+			$this.clearRows();
+			$this.updateTable ({
+				type: 'rebuild',
+				data: data
+			})
 		});
 	}
+}
+
+TableGrid.prototype.clearRows = function () {
+	q(this.getDom()[0]).find('tbody tr').remove();
 }
 
 TableGrid.prototype.updateTable = function ( item ) {
@@ -70,6 +78,13 @@ TableGrid.prototype.updateTable = function ( item ) {
 		item.data.forEach(function ( row , index ) {
 			changeStructure (row, item.type);
 		});
+	}
+
+	else if( isObject(item.data, true) ) {
+
+		for (var i in item.data) {
+			changeStructure (item.data[i], 'insert');
+		}
 	}
 
 	else {
@@ -113,34 +128,6 @@ TableGrid.prototype.updateTable = function ( item ) {
 
 				var row = $(Brackets.compile(template, { data: data }));
 				dom.append(row);
-			break;
-
-			case 'rebuild':
-				dom.find('tbody').children().remove();
-
-				template = '\
-				<tr id="'+ md5pk +'">\
-					<% for (var key in this.data.columns) { %>\
-						<td><% this.data.row[key] %></td>\
-					<% } %>\
-				</tr>'
-
-				template = '\
-					<thead>\
-						<% for (var item in this.data.fields) { %>\
-							<th><% this.data.fields[item] %></th>\
-						<% } %>\
-					</thead>\
-					<tbody>\
-						<% for (var i = 0; i < this.data.lines.length; i++) { %>\
-							<tr>\
-								<% for (var u = 0; u < this.data.fields.length; u++) { %>\
-									<td><% this.data.lines[i][u] %></td>\
-								<% } %>\
-							</tr>\
-						<%}%>\
-					</tbody>\
-				</table>';
 			break;
 		}
 	}

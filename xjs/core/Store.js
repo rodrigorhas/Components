@@ -113,16 +113,6 @@
 
 		if(!callback) callback = function () {};
 
-		/*promise.then(function () {
-			$this.onLoad.trigger(arguments[0]);
-
-			var r = callback.apply(window, arguments);
-
-			if( r ) arguments[0] = r;
-
-			$this.insert.apply($this, arguments);
-		});*/
-
 		var oldProxy = this.proxy,
 			$this = this;
 
@@ -133,13 +123,18 @@
 			success : function ( data ) { // fucking workaround
 				$this.proxy = oldProxy;
 
-				$this.onLoad.trigger(arguments[0]);
-
 				var r = callback.apply(window, arguments);
+				if( r ) data = r;
 
-				if( r ) arguments[0] = r;
+				var d = {};
+				for (var i = 0; i < data.length; i++) {
+					data[i][$this.getPK()] = i + 1;
+					d[i + 1] = data[i];
+				};
 
-				$this.insert.apply($this, arguments);
+				$this.data = d;
+
+				$this.onLoad.trigger( d );
 			}
 		});
 	}
