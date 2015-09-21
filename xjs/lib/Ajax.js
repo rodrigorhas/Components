@@ -44,6 +44,48 @@ var Ajax = (Ajax) ? Ajax : function ( config ) {
 
 	if(!url) return console.error('Invalid url');
 
+	if (window.fetch) {
+		var manifest = {};
+
+		if ( requestType.toUpperCase() == "POST" ) {
+			manifest.method = "post";
+			manifest.headers = {
+				"Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+			}
+		}
+
+		if ( data )	manifest.body = stringify(data);
+
+		window.fetch(url, manifest).then(function (response) {  
+			if (response.status >= 200 && response.status < 300) {  
+				return Promise.resolve(response)  
+			} else {  
+				return Promise.reject(new Error(response.statusText))  
+			}
+		})
+
+		.then(function (response) {
+			var requestResponse;
+
+			if (json) {
+				response.json().then(function ( data ) {
+					success( data );
+				});
+			}
+
+			else {
+				success( reponse );
+			}
+		})
+
+		.catch(function () {
+
+			console.log(arguments);
+		});
+
+		return;
+	}
+
 	if( window.XMLHttpRequest )
 		request = new XMLHttpRequest();
 	
