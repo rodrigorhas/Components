@@ -7,6 +7,7 @@ var data = [
 	'xjs/lib/Event.js',
 	'xjs/lib/Extend.js',
 	'xjs/lib/MD5.js',
+	'xjs/lib/Ajax.js',
 
 	'xjs/util/Util.js',
 

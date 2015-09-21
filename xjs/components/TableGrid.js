@@ -51,8 +51,11 @@ TableGrid.prototype.init = function () {
 		store.onChange.listen(function ( item ) {
 			$this.updateTable( item );
 		});
-	}
 
+		store.onLoad.listen(function ( data ) {
+			console.info(data);
+		});
+	}
 }
 
 TableGrid.prototype.updateTable = function ( item ) {

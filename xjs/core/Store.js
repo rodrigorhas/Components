@@ -78,6 +78,7 @@
 		this.onInsert = new Event();
 		this.onDelete = new Event();
 		this.onUpdate = new Event();
+		this.onLoad   = new Event();
 	}
 
 	Store.prototype.fn = {
@@ -108,12 +109,13 @@
 
 	Store.prototype.load = function ( callback ) {
 
+		console.log(this.proxy);
+
 		if(!callback) callback = function () {};
 
 		var $this = this,
 			type = this.proxy.type;
 
-		// load with ajax
 		var promise = new Promise(function (resolve, reject) {
 			var request = new XMLHttpRequest();
 
@@ -121,22 +123,21 @@
 			    if (request.readyState == 4 && request.status == 200) {
 			    	if( type == 'json') {
 			        	var json = $this.fn.tryParseJSON(request.responseText);
-			        	console.log(json);
+			        	//console.log(json);
 
+			        	console.log($this.proxy);
 			        	resolve(json);
 			    	}
 			    }
-
-			    else if (!request.status == 200) {
-				    reject(request.readyState, request.status);
-			    }
 			}
 
-			request.open("GET", $this.proxy.select, true);
+			request.open("GET", this.proxy.select, true);
 			request.send();
-		});
+		}.bind(this));
 
 		promise.then(function () {
+			$this.onLoad.trigger(arguments[0]);
+
 			var r = callback.apply(window, arguments);
 
 			if( r ) arguments[0] = r;
@@ -414,7 +415,7 @@
 		return arr;
 	}*/
 
-	Select.prototype.where = function (test) {
+	Select.prototype.where = function ( test ) {
 
 		var arr = [];
 		var $this = this;
