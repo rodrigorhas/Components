@@ -53,7 +53,7 @@ TableGrid.prototype.init = function () {
 		});
 
 		store.onLoad.listen(function ( data ) {
-			console.info(data);
+			//console.info(data);
 		});
 	}
 }
