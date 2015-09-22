@@ -37,16 +37,7 @@ TableGrid.prototype.init = function () {
 
 	if ( store ) {
 
-		var template = ['<thead>'],
-			c = store.getColumns();
-
-		for (var k in c) {
-			var column = c[k];
-			template.push('<th>'+ k +'</th>')
-		}
-
-		template.push('</thead>');
-		this.getDom().prepend(template.join(''));
+		this.configColumns ();
 
 		store.onChange.listen(function ( item ) {
 			$this.updateTable( item );
@@ -62,6 +53,34 @@ TableGrid.prototype.init = function () {
 	}
 }
 
+TableGrid.prototype.configColumns = function () {
+	// prepare the same structure from store
+	var cols = {};
+	if( this.columns ) {
+		for (var c in this.columns) {
+			var a = this.columns[c];
+			cols[a.name] = a;
+		}
+		this.columns = cols;
+	}
+
+	else {
+
+		this.columns = store.getColumns();
+	}
+
+	var template = ['<thead>'],
+		c = this.columns || store.getColumns();
+
+	for (var k in c) {
+		var column = c[k];
+		template.push('<th>'+ k +'</th>')
+	}
+
+	template.push('</thead>');
+	this.getDom().prepend(template.join(''));
+}
+
 TableGrid.prototype.clearRows = function () {
 	q(this.getDom()[0]).find('tbody tr').remove();
 }
@@ -70,7 +89,7 @@ TableGrid.prototype.updateTable = function ( item ) {
 	var $this = this;
 
 	var data = {
-		columns: $this.store.getColumns()
+		columns: this.columns
 	}
 
 	if( isArray(item.data) ) {
@@ -103,6 +122,8 @@ TableGrid.prototype.updateTable = function ( item ) {
 			data.row = item;
 		}
 
+		console.log(data);
+
 		var dom = $this.getDom(),
 			template,
 			pk = $this.store.getPK(),
@@ -122,12 +143,13 @@ TableGrid.prototype.updateTable = function ( item ) {
 				template = 
 				'<tr id="'+ md5pk +'">\
 					<% for (var key in this.data.columns) { %>\
-						<td><% this.data.row[key] %></td>\
+						<td><% ((this.data.row[key]) ? this.data.row[key] : this.data.row[this.data.columns[key].dataIndex]) %></td>\
 					<% } %>\
 				</tr>';
 
 				var row = $(Brackets.compile(template, { data: data }));
 				dom.append(row);
+				//q(dom[0]).append(row);
 			break;
 		}
 	}

@@ -132,7 +132,12 @@ require( data, function () {
 						{
 							id: 'mainGrid',
 							xtype: 'TableGrid',
-							store: 'mainStore'
+							store: 'mainStore',
+
+							columns: [
+								{name: 'Name', dataIndex: 'name', width: 40},
+								{name: 'Email', dataIndex: 'email', width: 30}
+							]
 						},
 					]
 				}

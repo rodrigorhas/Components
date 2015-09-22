@@ -93,7 +93,7 @@ var Ajax = (Ajax) ? Ajax : function ( config ) {
 		request = new ActiveXObject("Microsoft.XMLHTTP");
 
 	request.onreadystatechange = function() {
-		if (request.readyState == 4 && request.status == 200) { // success
+		if (request.readyState == 4 && response.status >= 200 && response.status < 295) { // success
 			var response = request.responseText;
 
 			if (json)
@@ -102,7 +102,7 @@ var Ajax = (Ajax) ? Ajax : function ( config ) {
 			success(response);
 		}
 
-		else if (request.readyState == 4 && request.status == 404 ) { // file not found
+		else if ( request.status == 404 ) { // file not found
 			fail();
 			console.error('File not found');
 		}
